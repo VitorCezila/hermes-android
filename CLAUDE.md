@@ -56,8 +56,18 @@ Convention plugins in `build-logic/`: `hermes.android.application`, `hermes.andr
 - UI text: Inter. Cryptographic data (hashes, fingerprints): Monospace.
 - Depth via tonal layering, not shadows. No decorative animations.
 
+## Key model — own key vs contacts
+
+The app follows the Kleopatra model: one identity key pair per device (`isSecret = true`), plus unlimited imported contact public keys (`isSecret = false`).
+
+- `GenerateKeyPairUseCase` enforces the one-own-key rule: returns `Result.failure` if an `isSecret = true` key already exists.
+- `ImportPublicKeyUseCase` saves contact keys via `KeyRepository.importPublicKey()` — no private key material involved.
+- `PgpKeyParser` (domain interface) / `BouncyCastlePgpKeyParser` (data impl) parses armored public keys for import.
+- `OnboardingViewModel` checks `keys.any { it.isSecret }` to decide whether to skip onboarding — having only contact keys does not skip it.
+
 ## Watch out for
 
 - Instrumented tests require a connected device or emulator — `connectedAndroidTest` will fail otherwise.
-- Bouncy Castle integration is planned but not yet implemented. Do not assume crypto APIs exist.
+- The Room schema is at version 2. Always write an explicit `Migration` class in `core/data/.../db/migration/` when modifying `PgpKeyEntity` — do not rely on destructive migration.
+- `PgpKeyEntity.encryptedPrivateKeyBlob` and `.privateKeyIv` are nullable — they are null for contact keys (`isSecret = false`).
 - Android Keystore has hardware-backed vs software-backed key behavior differences across API levels.

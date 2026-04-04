@@ -4,6 +4,7 @@ import com.cezila.hermes.core.domain.crypto.PgpKeyGenerator
 import com.cezila.hermes.core.domain.model.KeyAlgorithm
 import com.cezila.hermes.core.domain.model.PgpKey
 import com.cezila.hermes.core.domain.repository.KeyRepository
+import kotlinx.coroutines.flow.first
 
 class GenerateKeyPairUseCase(
     private val keyRepository: KeyRepository,
@@ -17,6 +18,11 @@ class GenerateKeyPairUseCase(
     )
 
     suspend operator fun invoke(params: Params): Result<PgpKey> {
+        val existing = keyRepository.getAllKeys().first()
+        if (existing.any { it.isSecret }) {
+            return Result.failure(IllegalStateException("Own key pair already exists"))
+        }
+
         val materialResult = pgpKeyGenerator.generate(
             ownerName = params.ownerName,
             ownerEmail = params.ownerEmail,

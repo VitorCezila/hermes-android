@@ -54,6 +54,25 @@ class KeyRepositoryImpl @Inject constructor(
         runCatching { dao.findById(id)?.toDomain() }
     }
 
+    override suspend fun importPublicKey(pgpKey: PgpKey): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val entity = PgpKeyEntity(
+                id = pgpKey.id,
+                fingerprint = pgpKey.fingerprint,
+                ownerName = pgpKey.ownerName,
+                ownerEmail = pgpKey.ownerEmail,
+                algorithmName = pgpKey.algorithm.name,
+                createdAt = pgpKey.createdAt,
+                expiresAt = pgpKey.expiresAt,
+                isSecret = false,
+                armoredPublicKey = pgpKey.armoredPublicKey,
+                encryptedPrivateKeyBlob = null,
+                privateKeyIv = null,
+            )
+            dao.insert(entity)
+        }
+    }
+
     override suspend fun deleteKey(id: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             dao.deleteById(id)
