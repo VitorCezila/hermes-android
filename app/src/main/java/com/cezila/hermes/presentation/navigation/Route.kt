@@ -8,4 +8,5 @@ sealed interface Route {
     @Serializable data object Keys : Route
     @Serializable data object Encrypt : Route
     @Serializable data object Decrypt : Route
+    @Serializable data object KeyGeneration : Route
 }

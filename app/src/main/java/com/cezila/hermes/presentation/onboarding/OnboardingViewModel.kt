@@ -21,8 +21,10 @@ class OnboardingViewModel @Inject constructor() :
             OnboardingUiEvent.OnSheetDismiss ->
                 setState { copy(showImportOrCreateSheet = false) }
 
-            OnboardingUiEvent.OnGenerateKeyClick ->
+            OnboardingUiEvent.OnGenerateKeyClick -> {
                 setState { copy(showImportOrCreateSheet = false) }
+                sendEffect(OnboardingUiEffect.NavigateToKeyGeneration)
+            }
 
             OnboardingUiEvent.OnImportKeyClick ->
                 setState { copy(showImportOrCreateSheet = false) }

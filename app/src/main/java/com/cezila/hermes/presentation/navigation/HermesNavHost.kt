@@ -11,7 +11,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cezila.hermes.presentation.decrypt.DecryptScreen
 import com.cezila.hermes.presentation.encrypt.EncryptScreen
+import com.cezila.hermes.presentation.keygeneration.KeyGenerationScreen
+import com.cezila.hermes.presentation.keygeneration.KeyGenerationUiEffect
+import com.cezila.hermes.presentation.keygeneration.KeyGenerationViewModel
 import com.cezila.hermes.presentation.keys.KeysScreen
+import com.cezila.hermes.presentation.keys.KeysUiEffect
+import com.cezila.hermes.presentation.keys.KeysViewModel
 import com.cezila.hermes.presentation.onboarding.LearnEncryptionScreen
 import com.cezila.hermes.presentation.onboarding.OnboardingScreen
 import com.cezila.hermes.presentation.onboarding.OnboardingUiEffect
@@ -36,6 +41,9 @@ fun HermesNavHost(
                     when (effect) {
                         OnboardingUiEffect.NavigateToLearnEncryption ->
                             navController.navigate(Route.LearnEncryption)
+
+                        OnboardingUiEffect.NavigateToKeyGeneration ->
+                            navController.navigate(Route.KeyGeneration)
                     }
                 }
             }
@@ -52,7 +60,49 @@ fun HermesNavHost(
             )
         }
 
-        composable<Route.Keys> { KeysScreen() }
+        composable<Route.KeyGeneration> {
+            val viewModel: KeyGenerationViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+
+            LaunchedEffect(viewModel) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        KeyGenerationUiEffect.NavigateToKeys ->
+                            navController.navigate(Route.Keys) {
+                                popUpTo(Route.Onboarding) { inclusive = true }
+                            }
+
+                        KeyGenerationUiEffect.NavigateBack ->
+                            navController.popBackStack()
+                    }
+                }
+            }
+
+            KeyGenerationScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+            )
+        }
+
+        composable<Route.Keys> {
+            val viewModel: KeysViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+
+            LaunchedEffect(viewModel) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        KeysUiEffect.NavigateToKeyGeneration ->
+                            navController.navigate(Route.KeyGeneration)
+                    }
+                }
+            }
+
+            KeysScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+            )
+        }
+
         composable<Route.Encrypt> { EncryptScreen() }
         composable<Route.Decrypt> { DecryptScreen() }
     }
