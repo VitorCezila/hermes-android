@@ -18,4 +18,5 @@ sealed interface OnboardingUiEvent : UiEvent {
 
 sealed interface OnboardingUiEffect : UiEffect {
     data object NavigateToLearnEncryption : OnboardingUiEffect
+    data object NavigateToKeyGeneration : OnboardingUiEffect
 }
