@@ -68,6 +68,9 @@ class KeysViewModel @Inject constructor(
                     sendEffect(KeysUiEffect.SharePublicKey(armoredText))
                 }
             }
+
+            is KeysUiEvent.OnKeyCardClick ->
+                sendEffect(KeysUiEffect.NavigateToKeyDetail(event.keyId))
         }
     }
 }
