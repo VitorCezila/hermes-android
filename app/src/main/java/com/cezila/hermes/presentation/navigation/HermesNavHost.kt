@@ -16,6 +16,9 @@ import com.cezila.hermes.presentation.encrypt.EncryptScreen
 import com.cezila.hermes.presentation.keygeneration.KeyGenerationScreen
 import com.cezila.hermes.presentation.keygeneration.KeyGenerationUiEffect
 import com.cezila.hermes.presentation.keygeneration.KeyGenerationViewModel
+import com.cezila.hermes.presentation.keyimport.KeyImportScreen
+import com.cezila.hermes.presentation.keyimport.KeyImportUiEffect
+import com.cezila.hermes.presentation.keyimport.KeyImportViewModel
 import com.cezila.hermes.presentation.keys.KeysScreen
 import com.cezila.hermes.presentation.keys.KeysUiEffect
 import com.cezila.hermes.presentation.keys.KeysViewModel
@@ -124,7 +127,22 @@ fun HermesNavHost(
         }
 
         composable<Route.KeyImport> {
-            // TODO Phase 4: Key Import screen
+            val viewModel: KeyImportViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+
+            LaunchedEffect(viewModel) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        KeyImportUiEffect.NavigateBack -> navController.popBackStack()
+                        KeyImportUiEffect.ImportSuccess -> navController.popBackStack()
+                    }
+                }
+            }
+
+            KeyImportScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+            )
         }
 
         composable<Route.Encrypt> { EncryptScreen() }
