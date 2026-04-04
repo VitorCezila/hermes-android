@@ -15,28 +15,33 @@ Local PGP key manager for Android. No backend, no accounts, no cloud. All crypto
 
 ## Architecture
 
-Clean Architecture with MVI pattern, three layers:
+Multi-module Clean Architecture with MVI pattern:
 
 ```
-Presentation → Domain → Data
+:app → :core:domain, :core:data, :core:ui
+:core:data → :core:domain
+:core:ui   → :core:domain
 ```
 
-- `domain/` — Pure Kotlin. Use cases, repository interfaces, domain models. Zero Android dependencies.
-- `data/` — Repository implementations, Android Keystore, Bouncy Castle PGP wrapper, mappers.
-- `presentation/` — Compose screens + ViewModels following MVI. Each screen has `State`, `Intent`, and `SideEffect`.
-- `ui/theme/` — Material 3 theme only (Color, Type, Theme).
+| Module | Package | Conteúdo |
+|--------|---------|----------|
+| `:app` | `com.cezila.hermes` | Activity, NavHost, screens, BaseViewModel, Hilt wiring |
+| `:core:domain` | `com.cezila.hermes.core.domain` | MVI contracts, use cases, repository interfaces, models |
+| `:core:data` | `com.cezila.hermes.core.data` | Repository impls, Keystore, Bouncy Castle wrapper, mappers |
+| `:core:ui` | `com.cezila.hermes.core.ui` | Theme (Color, Type, Theme), shared Compose components |
 
-Package root: `com.cezila.hermes`
+Convention plugins in `build-logic/`: `hermes.android.application`, `hermes.android.library`, `hermes.kotlin.library`, `hermes.hilt`.
 
 ## Conventions
 
-- MVI: never mutate state directly. Emit new state via `reduce()` or equivalent.
+- MVI: never mutate state directly. Emit new state via `.copy()`.
 - Use cases are single-responsibility. One use case = one operation.
-- Repository interfaces live in `domain/`, implementations in `data/`.
-- Mappers in `data/mapper/` handle all domain ↔ data model conversions.
+- Repository interfaces live in `:core:domain`, implementations in `:core:data`.
+- Mappers in `:core:data` handle all domain ↔ data model conversions. Raw data models never leak into domain.
 - Compose: stateless composables receive state and callbacks, never touch ViewModel directly.
 - Coroutines: use `viewModelScope` in ViewModels, `Dispatchers.IO` for keystore/crypto operations.
 - Min SDK 24. Do not use APIs above it without `@RequiresApi` + runtime check.
+- `:core:domain` must have zero Android dependencies (`android.*`, `androidx.*`).
 
 ## Security rules
 

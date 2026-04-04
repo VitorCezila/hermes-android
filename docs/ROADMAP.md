@@ -2,7 +2,7 @@
 
 ## Context
 
-Hermes is a local-first PGP key manager for Android (no backend, no accounts). The project skeleton already exists (Gradle, app module) but has no features implemented yet.
+Hermes is a local-first PGP key manager for Android (no backend, no accounts). The project skeleton already exists (Gradle, multi modules) but has no features implemented yet.
 
 **Design screens ready (Stitch):** Empty State, Keys Management, Key Import, Encrypt & Sign, Decrypt & Verify
 
