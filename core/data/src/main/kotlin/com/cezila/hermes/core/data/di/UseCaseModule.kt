@@ -3,8 +3,10 @@ package com.cezila.hermes.core.data.di
 import com.cezila.hermes.core.domain.crypto.PgpKeyGenerator
 import com.cezila.hermes.core.domain.crypto.PgpKeyParser
 import com.cezila.hermes.core.domain.repository.KeyRepository
+import com.cezila.hermes.core.domain.usecase.DeleteKeyUseCase
 import com.cezila.hermes.core.domain.usecase.GenerateKeyPairUseCase
 import com.cezila.hermes.core.domain.usecase.GetAllKeysUseCase
+import com.cezila.hermes.core.domain.usecase.GetKeyByIdUseCase
 import com.cezila.hermes.core.domain.usecase.ImportPublicKeyUseCase
 import dagger.Module
 import dagger.Provides
@@ -30,4 +32,12 @@ object UseCaseModule {
         keyRepository: KeyRepository,
         pgpKeyParser: PgpKeyParser,
     ): ImportPublicKeyUseCase = ImportPublicKeyUseCase(keyRepository, pgpKeyParser)
+
+    @Provides
+    fun provideGetKeyByIdUseCase(keyRepository: KeyRepository): GetKeyByIdUseCase =
+        GetKeyByIdUseCase(keyRepository)
+
+    @Provides
+    fun provideDeleteKeyUseCase(keyRepository: KeyRepository): DeleteKeyUseCase =
+        DeleteKeyUseCase(keyRepository)
 }

@@ -31,10 +31,12 @@ sealed interface KeysUiEvent : UiEvent {
     data object OnImportKeyClick : KeysUiEvent
     data object OnExportOwnKeyClick : KeysUiEvent
     data object OnExportAllKeysClick : KeysUiEvent
+    data class OnKeyCardClick(val keyId: String) : KeysUiEvent
 }
 
 sealed interface KeysUiEffect : UiEffect {
     data object NavigateToKeyGeneration : KeysUiEffect
     data object NavigateToKeyImport : KeysUiEffect
     data class SharePublicKey(val armoredText: String) : KeysUiEffect
+    data class NavigateToKeyDetail(val keyId: String) : KeysUiEffect
 }

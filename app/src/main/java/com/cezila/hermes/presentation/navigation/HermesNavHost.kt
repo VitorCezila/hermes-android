@@ -13,6 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cezila.hermes.presentation.decrypt.DecryptScreen
 import com.cezila.hermes.presentation.encrypt.EncryptScreen
+import com.cezila.hermes.presentation.keydetail.KeyDetailScreen
+import com.cezila.hermes.presentation.keydetail.KeyDetailUiEffect
+import com.cezila.hermes.presentation.keydetail.KeyDetailViewModel
 import com.cezila.hermes.presentation.keygeneration.KeyGenerationScreen
 import com.cezila.hermes.presentation.keygeneration.KeyGenerationUiEffect
 import com.cezila.hermes.presentation.keygeneration.KeyGenerationViewModel
@@ -116,6 +119,9 @@ fun HermesNavHost(
                             }
                             context.startActivity(Intent.createChooser(intent, null))
                         }
+
+                        is KeysUiEffect.NavigateToKeyDetail ->
+                            navController.navigate(Route.KeyDetail(effect.keyId))
                     }
                 }
             }
@@ -140,6 +146,32 @@ fun HermesNavHost(
             }
 
             KeyImportScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+            )
+        }
+
+        composable<Route.KeyDetail> {
+            val viewModel: KeyDetailViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+            val context = LocalContext.current
+
+            LaunchedEffect(viewModel) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        KeyDetailUiEffect.NavigateBack -> navController.popBackStack()
+                        is KeyDetailUiEffect.SharePublicKey -> {
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, effect.armoredText)
+                            }
+                            context.startActivity(Intent.createChooser(intent, null))
+                        }
+                    }
+                }
+            }
+
+            KeyDetailScreen(
                 state = state,
                 onEvent = viewModel::onEvent,
             )

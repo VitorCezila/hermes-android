@@ -161,7 +161,10 @@ fun KeysScreen(
 
                     if (keysState.ownKey != null) {
                         item(key = keysState.ownKey.id) {
-                            OwnKeyCard(key = keysState.ownKey)
+                            OwnKeyCard(
+                                key = keysState.ownKey,
+                                onClick = { onKeysEvent(KeysUiEvent.OnKeyCardClick(keysState.ownKey.id)) },
+                            )
                         }
                     } else {
                         item {
@@ -198,7 +201,10 @@ fun KeysScreen(
 
                     if (keysState.filteredContacts.isNotEmpty()) {
                         items(keysState.filteredContacts, key = { it.id }) { key ->
-                            ContactKeyCard(key = key)
+                            ContactKeyCard(
+                                key = key,
+                                onClick = { onKeysEvent(KeysUiEvent.OnKeyCardClick(key.id)) },
+                            )
                         }
                     } else {
                         item {
@@ -339,8 +345,9 @@ private fun SectionHeader(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun OwnKeyCard(key: PgpKey, modifier: Modifier = Modifier) {
+private fun OwnKeyCard(key: PgpKey, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -393,8 +400,9 @@ private fun OwnKeyCard(key: PgpKey, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ContactKeyCard(key: PgpKey, modifier: Modifier = Modifier) {
+private fun ContactKeyCard(key: PgpKey, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
