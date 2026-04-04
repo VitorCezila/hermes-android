@@ -17,4 +17,6 @@ interface KeyRepository {
     suspend fun getKeyById(id: String): Result<PgpKey?>
 
     suspend fun deleteKey(id: String): Result<Unit>
+
+    suspend fun getArmoredPrivateKey(id: String): Result<String>
 }
