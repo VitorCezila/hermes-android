@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.cezila.hermes.core.data.db.HermesDatabase
 import com.cezila.hermes.core.data.db.dao.PgpKeyDao
+import com.cezila.hermes.core.data.db.migration.MIGRATION_1_2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,7 +20,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): HermesDatabase =
         Room.databaseBuilder(context, HermesDatabase::class.java, "hermes.db")
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_1_2)
             .build()
 
     @Provides

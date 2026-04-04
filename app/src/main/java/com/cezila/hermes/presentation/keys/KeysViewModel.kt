@@ -19,7 +19,15 @@ class KeysViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getAllKeysUseCase()
-                .onEach { keys -> setState { copy(keys = keys, isLoading = false) } }
+                .onEach { keys ->
+                    setState {
+                        copy(
+                            ownKey = keys.firstOrNull { it.isSecret },
+                            contacts = keys.filter { !it.isSecret },
+                            isLoading = false,
+                        )
+                    }
+                }
                 .catch { setState { copy(isLoading = false) } }
                 .collect {}
         }
@@ -27,7 +35,39 @@ class KeysViewModel @Inject constructor(
 
     override fun handleEvent(event: KeysUiEvent) {
         when (event) {
-            KeysUiEvent.OnAddKeyClick -> sendEffect(KeysUiEffect.NavigateToKeyGeneration)
+            is KeysUiEvent.OnSearchQueryChange ->
+                setState { copy(searchQuery = event.query) }
+
+            KeysUiEvent.OnFabClick ->
+                setState { copy(showFabSheet = true) }
+
+            KeysUiEvent.OnSheetDismiss ->
+                setState { copy(showFabSheet = false) }
+
+            KeysUiEvent.OnGenerateKeyClick -> {
+                setState { copy(showFabSheet = false) }
+                sendEffect(KeysUiEffect.NavigateToKeyGeneration)
+            }
+
+            KeysUiEvent.OnImportKeyClick -> {
+                setState { copy(showFabSheet = false) }
+                sendEffect(KeysUiEffect.NavigateToKeyImport)
+            }
+
+            KeysUiEvent.OnExportOwnKeyClick -> {
+                val armoredKey = currentState.ownKey?.armoredPublicKey
+                if (!armoredKey.isNullOrBlank()) {
+                    sendEffect(KeysUiEffect.SharePublicKey(armoredKey))
+                }
+            }
+
+            KeysUiEvent.OnExportAllKeysClick -> {
+                val allKeys = listOfNotNull(currentState.ownKey) + currentState.contacts
+                val armoredText = allKeys.joinToString("\n\n") { it.armoredPublicKey }
+                if (armoredText.isNotBlank()) {
+                    sendEffect(KeysUiEffect.SharePublicKey(armoredText))
+                }
+            }
         }
     }
 }

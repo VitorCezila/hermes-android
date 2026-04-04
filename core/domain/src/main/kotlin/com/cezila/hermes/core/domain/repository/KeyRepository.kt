@@ -10,6 +10,8 @@ interface KeyRepository {
         passphrase: CharArray,
     ): Result<Unit>
 
+    suspend fun importPublicKey(pgpKey: PgpKey): Result<Unit>
+
     fun getAllKeys(): Flow<List<PgpKey>>
 
     suspend fun getKeyById(id: String): Result<PgpKey?>

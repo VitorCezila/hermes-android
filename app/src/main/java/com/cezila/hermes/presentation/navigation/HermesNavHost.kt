@@ -1,10 +1,12 @@
 package com.cezila.hermes.presentation.navigation
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -44,6 +46,11 @@ fun HermesNavHost(
 
                         OnboardingUiEffect.NavigateToKeyGeneration ->
                             navController.navigate(Route.KeyGeneration)
+
+                        OnboardingUiEffect.NavigateToKeys ->
+                            navController.navigate(Route.Keys) {
+                                popUpTo(Route.Onboarding) { inclusive = true }
+                            }
                     }
                 }
             }
@@ -85,22 +92,39 @@ fun HermesNavHost(
         }
 
         composable<Route.Keys> {
-            val viewModel: KeysViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsState()
+            val keysViewModel: KeysViewModel = hiltViewModel()
+            val keysState by keysViewModel.state.collectAsState()
 
-            LaunchedEffect(viewModel) {
-                viewModel.effect.collect { effect ->
+            val context = LocalContext.current
+
+            LaunchedEffect(keysViewModel) {
+                keysViewModel.effect.collect { effect ->
                     when (effect) {
                         KeysUiEffect.NavigateToKeyGeneration ->
                             navController.navigate(Route.KeyGeneration)
+
+                        KeysUiEffect.NavigateToKeyImport ->
+                            navController.navigate(Route.KeyImport)
+
+                        is KeysUiEffect.SharePublicKey -> {
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, effect.armoredText)
+                            }
+                            context.startActivity(Intent.createChooser(intent, null))
+                        }
                     }
                 }
             }
 
             KeysScreen(
-                state = state,
-                onEvent = viewModel::onEvent,
+                keysState = keysState,
+                onKeysEvent = keysViewModel::onEvent,
             )
+        }
+
+        composable<Route.KeyImport> {
+            // TODO Phase 4: Key Import screen
         }
 
         composable<Route.Encrypt> { EncryptScreen() }

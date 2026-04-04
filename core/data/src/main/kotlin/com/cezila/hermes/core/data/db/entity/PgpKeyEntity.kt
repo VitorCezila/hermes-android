@@ -15,6 +15,6 @@ data class PgpKeyEntity(
     val expiresAt: Long?,
     val isSecret: Boolean,
     val armoredPublicKey: String,
-    val encryptedPrivateKeyBlob: ByteArray,
-    val privateKeyIv: ByteArray,
+    val encryptedPrivateKeyBlob: ByteArray?,
+    val privateKeyIv: ByteArray?,
 )

@@ -57,29 +57,39 @@ Hermes is a local-first PGP key manager for Android (no backend, no accounts). T
 ---
 
 ### Phase 3: Keys Management (List)
-> Display and manage all stored keys
+> Display and manage all stored keys, distinguishing identity key from contact keys
 
-- Keys list screen with cards (name, email, fingerprint, validity)
-- Search/filter functionality ("Archive Search")
-- "Export All" button (exports all public keys)
-- FAB (+) → navigate to import/generate choice
-- "Import New Identity" card at bottom of list
-- Conditional: if no keys → show Empty State (Phase 1), else → show list
+The app follows the Kleopatra model: one own identity key pair (`isSecret = true`) + unlimited contact public keys (`isSecret = false`).
 
-**Deliverable:** Key list displays generated/imported keys, search works, FAB navigates correctly.
+- Keys list screen with two visual sections:
+  - **My Identity** — the own key pair (if generated). Pinned at the top, distinct visual treatment (e.g. Clay accent). Shows name, email, fingerprint.
+  - **Contacts** — imported contact public keys, each shown as a card (name, email, fingerprint, validity).
+- Search/filter applies across both sections
+- FAB (+) opens a bottom sheet with two choices:
+  - "Generate My Key" — disabled (with tooltip) if an own key already exists
+  - "Import Contact Key" → navigate to import flow (Phase 4)
+- "Export All Public Keys" action in overflow menu
+- Conditional: if no keys at all → show Empty State (Phase 1), else → show list
+
+**Deliverable:** Key list correctly separates identity key from contact keys; FAB enforces the one-own-key rule in the UI.
 
 ---
 
-### Phase 4: Key Import
-> Import existing PGP keys from .asc/.gpg files
+### Phase 4: Contact Key Import
+> Import a contact's public key from armored text or .asc/.gpg file
 
-- **Domain layer:** `ImportKeyUseCase`
-- **Data layer:** File parser for .asc/.gpg formats via Bouncy Castle
-- **Presentation:** Import screen (file picker with 2MB limit, passphrase field, "Import to Vault" button)
-- Android file picker integration (SAF — Storage Access Framework)
-- Validation: file format, size limit, passphrase correctness
+This phase is exclusively for importing **public keys** of other people (`isSecret = false`). It does not handle private key import (out of scope — Hermes generates its own key on-device).
 
-**Deliverable:** User can import an existing PGP key from a file and see it in the key list.
+- **Domain layer:** `ImportPublicKeyUseCase` — parses armored key via `PgpKeyParser`, validates it is a public key, saves via `KeyRepository.importPublicKey()`; returns `Result.failure` if the armored block is invalid or contains a secret key
+- **Data layer:** `BouncyCastlePgpKeyParser` implementation of `PgpKeyParser`; file reader via SAF
+- **Presentation:** Import screen with two input modes:
+  - **Paste armored key** — multiline text field for PGP public key block
+  - **Pick file** — SAF file picker (.asc / .gpg, 2 MB limit)
+  - "Import Contact" button — disabled until valid key is detected
+  - Inline validation feedback (invalid format, secret key detected, duplicate key)
+- No passphrase field — contact keys are public, no passphrase required
+
+**Deliverable:** User can import a contact's public key (paste or file) and see it appear in the Contacts section of the key list.
 
 ---
 
