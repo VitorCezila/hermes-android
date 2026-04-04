@@ -17,3 +17,7 @@
 .cxx
 local.properties
 /.idea/inspectionProfiles/Project_Default.xml
+
+# Claude Code — personal overrides (not for team)
+CLAUDE.local.md
+.claude/settings.local.json

@@ -12,6 +12,7 @@ Format: `type(scope): short description`
 - Description in imperative, lowercase, no period at the end
 - Max 72 characters in the subject line
 - Body optional: explain *why*, not *what*
+- Should mention the issue
 
 Examples:
 - `feat(domain): add GenerateKeyPairUseCase`
