@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -24,3 +25,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Hermes Android"
 include(":app")
+include(":core:domain")
+include(":core:data")
+include(":core:ui")

@@ -10,7 +10,8 @@
 /.idea/*
 .idea
 .DS_Store
-/build
+**/build
+.kotlin
 /captures
 .externalNativeBuild
 .cxx
