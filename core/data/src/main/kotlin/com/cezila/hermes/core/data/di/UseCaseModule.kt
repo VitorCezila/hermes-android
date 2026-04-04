@@ -1,9 +1,12 @@
 package com.cezila.hermes.core.data.di
 
+import com.cezila.hermes.core.domain.crypto.PgpEncryptor
 import com.cezila.hermes.core.domain.crypto.PgpKeyGenerator
 import com.cezila.hermes.core.domain.crypto.PgpKeyParser
 import com.cezila.hermes.core.domain.repository.KeyRepository
 import com.cezila.hermes.core.domain.usecase.DeleteKeyUseCase
+import com.cezila.hermes.core.domain.usecase.EncryptAndSignUseCase
+import com.cezila.hermes.core.domain.usecase.EncryptFileAndSignUseCase
 import com.cezila.hermes.core.domain.usecase.GenerateKeyPairUseCase
 import com.cezila.hermes.core.domain.usecase.GetAllKeysUseCase
 import com.cezila.hermes.core.domain.usecase.GetKeyByIdUseCase
@@ -40,4 +43,16 @@ object UseCaseModule {
     @Provides
     fun provideDeleteKeyUseCase(keyRepository: KeyRepository): DeleteKeyUseCase =
         DeleteKeyUseCase(keyRepository)
+
+    @Provides
+    fun provideEncryptAndSignUseCase(
+        keyRepository: KeyRepository,
+        pgpEncryptor: PgpEncryptor,
+    ): EncryptAndSignUseCase = EncryptAndSignUseCase(keyRepository, pgpEncryptor)
+
+    @Provides
+    fun provideEncryptFileAndSignUseCase(
+        keyRepository: KeyRepository,
+        pgpEncryptor: PgpEncryptor,
+    ): EncryptFileAndSignUseCase = EncryptFileAndSignUseCase(keyRepository, pgpEncryptor)
 }

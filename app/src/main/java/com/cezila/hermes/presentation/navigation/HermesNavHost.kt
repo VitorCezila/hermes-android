@@ -1,10 +1,20 @@
 package com.cezila.hermes.presentation.navigation
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.provider.OpenableColumns
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -13,6 +23,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cezila.hermes.presentation.decrypt.DecryptScreen
 import com.cezila.hermes.presentation.encrypt.EncryptScreen
+import com.cezila.hermes.presentation.encrypt.EncryptUiEffect
+import com.cezila.hermes.presentation.encrypt.EncryptUiEvent
+import com.cezila.hermes.presentation.encrypt.EncryptViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.cezila.hermes.presentation.keydetail.KeyDetailScreen
 import com.cezila.hermes.presentation.keydetail.KeyDetailUiEffect
 import com.cezila.hermes.presentation.keydetail.KeyDetailViewModel
@@ -177,7 +193,78 @@ fun HermesNavHost(
             )
         }
 
-        composable<Route.Encrypt> { EncryptScreen() }
+        composable<Route.Encrypt> {
+            val viewModel: EncryptViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+            val context = LocalContext.current
+            val scope = rememberCoroutineScope()
+
+            val filePickerLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocument(),
+            ) { uri ->
+                uri ?: return@rememberLauncherForActivityResult
+                scope.launch {
+                    val (bytes, name) = withContext(Dispatchers.IO) {
+                        val resolver = context.contentResolver
+                        var fileName = uri.lastPathSegment ?: "file"
+                        resolver.query(uri, null, null, null, null)?.use { cursor ->
+                            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                            if (cursor.moveToFirst() && nameIndex >= 0) {
+                                fileName = cursor.getString(nameIndex)
+                            }
+                        }
+                        val fileBytes = resolver.openInputStream(uri)?.use { it.readBytes() } ?: byteArrayOf()
+                        Pair(fileBytes, fileName)
+                    }
+                    viewModel.onEvent(EncryptUiEvent.OnFileSelected(bytes, name))
+                }
+            }
+
+            val pendingEncryptedFile = remember { mutableStateOf<ByteArray?>(null) }
+
+            val saveFileLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.CreateDocument("application/octet-stream"),
+            ) { uri ->
+                uri ?: return@rememberLauncherForActivityResult
+                val bytes = pendingEncryptedFile.value ?: return@rememberLauncherForActivityResult
+                scope.launch(Dispatchers.IO) {
+                    context.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "File saved", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                pendingEncryptedFile.value = null
+            }
+
+            LaunchedEffect(viewModel) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        EncryptUiEffect.PickFile ->
+                            filePickerLauncher.launch(arrayOf("*/*"))
+
+                        is EncryptUiEffect.SaveEncryptedFile -> {
+                            pendingEncryptedFile.value = effect.bytes
+                            saveFileLauncher.launch(effect.suggestedName)
+                        }
+
+                        is EncryptUiEffect.CopyToClipboard -> {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(ClipData.newPlainText("PGP Message", effect.text))
+                            Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is EncryptUiEffect.ShowToast ->
+                            Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            EncryptScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+                onPickFile = { filePickerLauncher.launch(arrayOf("*/*")) },
+            )
+        }
         composable<Route.Decrypt> { DecryptScreen() }
     }
 }

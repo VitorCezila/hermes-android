@@ -79,4 +79,17 @@ class KeyRepositoryImpl @Inject constructor(
             keystoreManager.deleteKey(id)
         }
     }
+
+    override suspend fun getArmoredPrivateKey(id: String): Result<String> = withContext(ioDispatcher) {
+        runCatching {
+            val entity = dao.findById(id)
+                ?: throw IllegalArgumentException("Key not found: $id")
+            val blob = entity.encryptedPrivateKeyBlob
+                ?: throw IllegalStateException("Key has no private key material")
+            val iv = entity.privateKeyIv
+                ?: throw IllegalStateException("Key has no IV for private key")
+            val decryptedBytes = keystoreManager.decrypt(blob, iv, id)
+            String(decryptedBytes, Charsets.UTF_8)
+        }
+    }
 }
