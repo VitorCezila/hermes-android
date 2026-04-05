@@ -2,6 +2,9 @@
 
 > The quiet space for your digital truth.
 
+[![Lint](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-lint.yml/badge.svg)](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-lint.yml)
+[![Unit Tests](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-unit-tests.yml/badge.svg)](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-unit-tests.yml)
+
 A local PGP key manager for Android. Manage your cryptographic identities, encrypt messages, and verify signatures — entirely on your device, with no accounts, no cloud, and no backend.
 
 <p align="center">

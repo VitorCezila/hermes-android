@@ -51,7 +51,7 @@ class BouncyCastlePgpEncryptor : PgpEncryptor {
                 output = armoredOut,
             )
         }
-        baos.toString(Charsets.UTF_8)
+        baos.toString(Charsets.UTF_8.name())
     }
 
     override suspend fun encryptFileAndSign(

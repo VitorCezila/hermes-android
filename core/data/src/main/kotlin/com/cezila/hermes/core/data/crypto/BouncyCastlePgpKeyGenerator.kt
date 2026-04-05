@@ -148,6 +148,6 @@ class BouncyCastlePgpKeyGenerator : PgpKeyGenerator {
     private fun armorKeyRing(encode: (ArmoredOutputStream) -> Unit): String {
         val baos = ByteArrayOutputStream()
         ArmoredOutputStream(baos).use { encode(it) }
-        return baos.toString(Charsets.UTF_8)
+        return baos.toString(Charsets.UTF_8.name())
     }
 }
