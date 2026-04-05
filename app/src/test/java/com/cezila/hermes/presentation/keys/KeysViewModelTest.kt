@@ -41,7 +41,7 @@ class KeysViewModelTest {
         armoredPublicKey = "-----BEGIN PGP PUBLIC KEY BLOCK-----",
     )
 
-    private val fakeKey2 = fakeKey1.copy(id = "0xCCDD", fingerprint = "CCDD")
+    private val fakeKey2 = fakeKey1.copy(id = "0xCCDD", fingerprint = "CCDD", isSecret = false)
 
     @Before
     fun setup() {
@@ -60,7 +60,7 @@ class KeysViewModelTest {
         advanceUntilIdle()
 
         assertFalse(viewModel.state.value.isLoading)
-        assertTrue(viewModel.state.value.keys.isEmpty())
+        assertFalse(viewModel.state.value.hasKeys)
     }
 
     @Test
@@ -69,8 +69,8 @@ class KeysViewModelTest {
         val viewModel = KeysViewModel(getAllKeysUseCase)
         advanceUntilIdle()
 
-        assertEquals(2, viewModel.state.value.keys.size)
-        assertEquals(fakeKey1, viewModel.state.value.keys[0])
+        assertEquals(fakeKey1, viewModel.state.value.ownKey)
+        assertEquals(1, viewModel.state.value.contacts.size)
     }
 
     @Test
@@ -83,7 +83,7 @@ class KeysViewModelTest {
         val viewModel = KeysViewModel(getAllKeysUseCase)
 
         advanceUntilIdle()
-        assertEquals(2, viewModel.state.value.keys.size)
+        assertTrue(viewModel.state.value.hasKeys)
     }
 
     @Test
@@ -110,7 +110,7 @@ class KeysViewModelTest {
         advanceUntilIdle()
 
         viewModel.effect.test {
-            viewModel.onEvent(KeysUiEvent.OnAddKeyClick)
+            viewModel.onEvent(KeysUiEvent.OnGenerateKeyClick)
             assertEquals(KeysUiEffect.NavigateToKeyGeneration, awaitItem())
         }
     }

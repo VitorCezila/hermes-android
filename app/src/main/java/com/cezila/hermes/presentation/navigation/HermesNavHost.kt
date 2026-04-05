@@ -22,6 +22,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cezila.hermes.presentation.decrypt.DecryptScreen
+import com.cezila.hermes.presentation.decrypt.DecryptUiEffect
+import com.cezila.hermes.presentation.decrypt.DecryptUiEvent
+import com.cezila.hermes.presentation.decrypt.DecryptViewModel
 import com.cezila.hermes.presentation.encrypt.EncryptScreen
 import com.cezila.hermes.presentation.encrypt.EncryptUiEffect
 import com.cezila.hermes.presentation.encrypt.EncryptUiEvent
@@ -265,6 +268,83 @@ fun HermesNavHost(
                 onPickFile = { filePickerLauncher.launch(arrayOf("*/*")) },
             )
         }
-        composable<Route.Decrypt> { DecryptScreen() }
+        composable<Route.Decrypt> {
+            val viewModel: DecryptViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+            val context = LocalContext.current
+            val scope = rememberCoroutineScope()
+
+            val filePickerLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocument(),
+            ) { uri ->
+                uri ?: return@rememberLauncherForActivityResult
+                scope.launch {
+                    val (bytes, name) = withContext(Dispatchers.IO) {
+                        val resolver = context.contentResolver
+                        var fileName = uri.lastPathSegment ?: "file"
+                        resolver.query(uri, null, null, null, null)?.use { cursor ->
+                            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                            if (cursor.moveToFirst() && nameIndex >= 0) {
+                                fileName = cursor.getString(nameIndex)
+                            }
+                        }
+                        val fileBytes = resolver.openInputStream(uri)?.use { it.readBytes() } ?: byteArrayOf()
+                        Pair(fileBytes, fileName)
+                    }
+                    viewModel.onEvent(DecryptUiEvent.OnFileSelected(bytes, name))
+                }
+            }
+
+            val pendingDecryptedFile = remember { mutableStateOf<ByteArray?>(null) }
+
+            val saveFileLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.CreateDocument("application/octet-stream"),
+            ) { uri ->
+                uri ?: return@rememberLauncherForActivityResult
+                val bytes = pendingDecryptedFile.value ?: return@rememberLauncherForActivityResult
+                scope.launch(Dispatchers.IO) {
+                    context.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "File saved", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                pendingDecryptedFile.value = null
+            }
+
+            LaunchedEffect(viewModel) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        DecryptUiEffect.PickFile ->
+                            filePickerLauncher.launch(arrayOf("*/*"))
+
+                        is DecryptUiEffect.SaveDecryptedFile -> {
+                            pendingDecryptedFile.value = effect.bytes
+                            saveFileLauncher.launch(effect.suggestedName)
+                        }
+
+                        is DecryptUiEffect.CopyToClipboard -> {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(ClipData.newPlainText("Decrypted Message", effect.text))
+                            Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is DecryptUiEffect.ShowToast ->
+                            Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+
+                        DecryptUiEffect.RequestClipboardRead -> {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val text = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+                            viewModel.onEvent(DecryptUiEvent.OnCiphertextChanged(text))
+                        }
+                    }
+                }
+            }
+
+            DecryptScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+                onPickFile = { filePickerLauncher.launch(arrayOf("*/*")) },
+            )
+        }
     }
 }

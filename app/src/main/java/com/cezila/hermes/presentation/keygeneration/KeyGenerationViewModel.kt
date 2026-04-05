@@ -1,10 +1,11 @@
 package com.cezila.hermes.presentation.keygeneration
 
-import android.util.Patterns
 import androidx.lifecycle.viewModelScope
+import com.cezila.hermes.core.data.di.IoDispatcher
 import com.cezila.hermes.core.domain.usecase.GenerateKeyPairUseCase
 import com.cezila.hermes.presentation.mvi.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -12,6 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class KeyGenerationViewModel @Inject constructor(
     private val generateKeyPairUseCase: GenerateKeyPairUseCase,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<KeyGenerationUiState, KeyGenerationUiEvent, KeyGenerationUiEffect>(
     initialState = KeyGenerationUiState(),
 ) {
@@ -43,7 +45,7 @@ class KeyGenerationViewModel @Inject constructor(
     private fun generate() {
         if (!validate()) return
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             setState { copy(isLoading = true, generalError = null) }
             val passphraseArray = currentState.passphrase.toCharArray()
             try {
@@ -66,6 +68,10 @@ class KeyGenerationViewModel @Inject constructor(
         }
     }
 
+    companion object {
+        private val EMAIL_REGEX = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$")
+    }
+
     private fun validate(): Boolean {
         val state = currentState
         var isValid = true
@@ -75,7 +81,7 @@ class KeyGenerationViewModel @Inject constructor(
             isValid = false
         }
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(state.ownerEmail.trim()).matches()) {
+        if (!EMAIL_REGEX.matches(state.ownerEmail.trim())) {
             setState { copy(emailError = "Enter a valid email address") }
             isValid = false
         }
