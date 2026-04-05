@@ -61,12 +61,16 @@ class BouncyCastlePgpKeyGenerator : PgpKeyGenerator {
         val encryptorBuilder = JcePBESecretKeyEncryptorBuilder(SymmetricKeyAlgorithmTags.AES_256)
             .setProvider(bcProvider)
 
+        // Ed25519 master key only signs/certifies; encryption is handled by a dedicated X25519 subkey.
+        // RSA master key handles everything (signing + encryption) in a single key.
+        val masterKeyFlags = if (algorithm == KeyAlgorithm.ED25519) {
+            KeyFlags.CERTIFY_OTHER or KeyFlags.SIGN_DATA
+        } else {
+            KeyFlags.CERTIFY_OTHER or KeyFlags.SIGN_DATA or KeyFlags.ENCRYPT_COMMS or KeyFlags.ENCRYPT_STORAGE
+        }
+
         val subpacketGen = PGPSignatureSubpacketGenerator().apply {
-            setKeyFlags(
-                false,
-                KeyFlags.CERTIFY_OTHER or KeyFlags.SIGN_DATA or
-                    KeyFlags.ENCRYPT_COMMS or KeyFlags.ENCRYPT_STORAGE,
-            )
+            setKeyFlags(false, masterKeyFlags)
             setPreferredSymmetricAlgorithms(
                 false,
                 intArrayOf(SymmetricKeyAlgorithmTags.AES_256, SymmetricKeyAlgorithmTags.AES_128),
@@ -88,6 +92,14 @@ class BouncyCastlePgpKeyGenerator : PgpKeyGenerator {
             signerBuilder,
             encryptorBuilder.build(passphrase),
         )
+
+        if (algorithm == KeyAlgorithm.ED25519) {
+            val encSubKeyPair = generateX25519KeyPair(creationDate)
+            val encSubpackets = PGPSignatureSubpacketGenerator().apply {
+                setKeyFlags(false, KeyFlags.ENCRYPT_COMMS or KeyFlags.ENCRYPT_STORAGE)
+            }.generate()
+            keyRingGenerator.addSubKey(encSubKeyPair, encSubpackets, null)
+        }
 
         val secretKeyRing = keyRingGenerator.generateSecretKeyRing()
         val publicKeyRing = keyRingGenerator.generatePublicKeyRing()
@@ -118,6 +130,12 @@ class BouncyCastlePgpKeyGenerator : PgpKeyGenerator {
         val kpg = KeyPairGenerator.getInstance("Ed25519", bcProvider)
         val javaKeyPair = kpg.generateKeyPair()
         return JcaPGPKeyPair(PGPPublicKey.EDDSA, javaKeyPair, creationDate)
+    }
+
+    private fun generateX25519KeyPair(creationDate: Date): PGPKeyPair {
+        val kpg = KeyPairGenerator.getInstance("X25519", bcProvider)
+        val javaKeyPair = kpg.generateKeyPair()
+        return JcaPGPKeyPair(PGPPublicKey.ECDH, javaKeyPair, creationDate)
     }
 
     private fun armorKeyRing(encode: (ArmoredOutputStream) -> Unit): String {
