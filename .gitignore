@@ -10,9 +10,17 @@
 /.idea/*
 .idea
 .DS_Store
-/build
+**/build
+.kotlin
 /captures
 .externalNativeBuild
 .cxx
 local.properties
 /.idea/inspectionProfiles/Project_Default.xml
+
+# Release signing — never commit the keystore
+release.keystore
+
+# Claude Code — personal overrides (not for team)
+CLAUDE.local.md
+.claude/settings.local.json

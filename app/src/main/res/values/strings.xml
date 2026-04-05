@@ -1,3 +1,161 @@
 <resources>
-    <string name="app_name">Hermes Android</string>
+    <string name="app_name">Hermes</string>
+
+    <!-- Shared -->
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="copy">Copy</string>
+    <string name="confirm">Confirm</string>
+    <string name="passphrase">Passphrase</string>
+    <string name="confirm_passphrase">Confirm Passphrase</string>
+    <string name="hide_passphrase">Hide passphrase</string>
+    <string name="show_passphrase">Show passphrase</string>
+    <string name="secure_instance_no_cloud">SECURE INSTANCE  •  NO CLOUD TETHER</string>
+    <string name="tagline">The quiet space for\nyour digital truth.</string>
+    <string name="tagline_subtitle">Your privacy stays on your device. Start by importing or creating a key.</string>
+    <string name="settings">Settings</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_how_to_start">How would you like to start?</string>
+    <string name="onboarding_import_or_create">Import or Create Key</string>
+    <string name="onboarding_learn_encryption">Learn about Local Encryption</string>
+    <string name="onboarding_generate_new_key">Generate New Key</string>
+    <string name="onboarding_generate_description">Create a new RSA-4096 or Ed25519 key pair</string>
+    <string name="onboarding_import_existing">Import Existing Key</string>
+    <string name="onboarding_import_description">Load a .asc or .gpg file from your device</string>
+
+    <!-- Keys screen -->
+    <string name="keys_vault_label">VAULT</string>
+    <string name="keys_export_my_public_key">Export my public key</string>
+    <string name="keys_more_options">More options</string>
+    <string name="keys_export_all">Export All Public Keys</string>
+    <string name="keys_add_key">Add key</string>
+    <string name="keys_my_key_section">MY KEY</string>
+    <string name="keys_contacts_section">CONTACTS</string>
+    <string name="keys_search_contacts">Search contacts</string>
+    <string name="keys_generate_my_key">Generate My Key</string>
+    <string name="keys_already_have_identity">You already have an identity key</string>
+    <string name="keys_generate_description">Create a new RSA-4096 or Ed25519 key pair</string>
+    <string name="keys_import_contact">Import Contact Key</string>
+    <string name="keys_import_contact_description">Add a contact\'s public key (.asc or paste)</string>
+    <string name="keys_fab_generate">GENERATE YOUR KEY PAIR</string>
+    <string name="keys_fab_import">IMPORT A CONTACT KEY</string>
+
+    <!-- Encrypt screen -->
+    <string name="encrypt_hermes_label">HERMES</string>
+    <string name="encrypt_profile">Profile</string>
+    <string name="encrypt_title">Secure your\nmessage.</string>
+    <string name="encrypt_subtitle">Select a recipient and prepare your payload\nfor end-to-end cryptographic delivery.</string>
+    <string name="encrypt_recipient_section">RECIPIENT SELECTION</string>
+    <string name="encrypt_no_contacts">No contact keys imported yet. Import a contact\'s public key to encrypt for them.</string>
+    <string name="encrypt_payload_section">PAYLOAD</string>
+    <string name="encrypt_message_hint">Write your message here...</string>
+    <string name="encrypt_aes_badge">AES-256 ENABLED</string>
+    <string name="encrypt_file_archive">File Archive</string>
+    <string name="encrypt_file_drop_hint">Drop larger payloads or click to browse</string>
+    <string name="encrypt_sign_and_encrypt">Sign &amp; Encrypt</string>
+    <string name="encrypt_dialog_title">Enter Passphrase</string>
+    <string name="encrypt_dialog_subtitle">Required to sign the message with your identity key.</string>
+    <string name="encrypt_result_title">Encrypted Message</string>
+    <string name="encrypt_sig_footer">DIGITAL SIGNATURE WILL BE APPENDED TO %1$s</string>
+
+    <!-- Decrypt screen -->
+    <string name="decrypt_title">Decode your\nmessage.</string>
+    <string name="decrypt_subtitle">Decrypt and cryptographically verify the\norigin of a PGP-secured payload.</string>
+    <string name="decrypt_input_mode">INPUT MODE</string>
+    <string name="decrypt_pgp_message_label">PGP MESSAGE</string>
+    <string name="decrypt_paste">PASTE</string>
+    <string name="decrypt_clear">CLEAR</string>
+    <string name="decrypt_paste_hint">Paste PGP message here…</string>
+    <string name="decrypt_awaiting_header">AWAITING VALID HEADER…</string>
+    <string name="decrypt_valid_message">VALID PGP MESSAGE</string>
+    <string name="decrypt_invalid_format">INVALID FORMAT</string>
+    <string name="decrypt_encrypted_file">ENCRYPTED FILE</string>
+    <string name="decrypt_file_pick_hint">Tap to pick a .pgp or .gpg file</string>
+    <string name="decrypt_transmission_section">TRANSMISSION DETAILS</string>
+    <string name="decrypt_protocol_label">Protocol</string>
+    <string name="decrypt_protocol_value">OpenPGP v4</string>
+    <string name="decrypt_runtime_label">Runtime</string>
+    <string name="decrypt_runtime_value">Client-Side Only</string>
+    <string name="decrypt_button">Decrypt &amp; Verify</string>
+    <string name="decrypt_secure_badge">SECURE INSTANCE — NO CLOUD TETHER</string>
+    <string name="decrypt_dialog_title">Enter Passphrase</string>
+    <string name="decrypt_dialog_subtitle">Required to unlock your identity key for decryption.</string>
+    <string name="decrypt_result_title">Decrypted Message</string>
+    <string name="decrypt_save_file">Save File</string>
+    <string name="decrypt_file_size">%1$d bytes</string>
+    <string name="decrypt_sig_verified">VERIFIED — %1$s</string>
+    <string name="decrypt_sig_invalid">SIGNATURE INVALID</string>
+    <string name="decrypt_sig_unknown">UNKNOWN SIGNER — %1$s</string>
+    <string name="decrypt_sig_unsigned">UNSIGNED</string>
+
+    <!-- Key generation screen -->
+    <string name="keygen_title">Generate Key</string>
+    <string name="keygen_name_label">Name</string>
+    <string name="keygen_email_label">Email</string>
+    <string name="keygen_algorithm_label">Algorithm</string>
+    <string name="keygen_expiry_label">Key Expiry</string>
+    <string name="keygen_expiry_never">Never</string>
+    <string name="keygen_expiry_1yr">1 yr</string>
+    <string name="keygen_expiry_2yr">2 yr</string>
+    <string name="keygen_expiry_3yr">3 yr</string>
+    <string name="keygen_private_key_notice">Your private key is stored encrypted on this device only.</string>
+    <string name="keygen_generating">Generating your key pair. This may take a few seconds.</string>
+    <string name="keygen_button">Generate Key</string>
+    <string name="keygen_on_device_badge">KEY MATERIAL STAYS ON DEVICE</string>
+
+    <!-- Key import screen -->
+    <string name="keyimport_title">Import Contact Key</string>
+    <string name="keyimport_pgp_block_label">PGP Public Key Block</string>
+    <string name="keyimport_pgp_block_hint">-----BEGIN PGP PUBLIC KEY BLOCK-----</string>
+    <string name="keyimport_error_invalid_format">Invalid PGP public key format</string>
+    <string name="keyimport_error_private_key">This contains a private key. Only public keys can be imported.</string>
+    <string name="keyimport_error_duplicate">This key is already in your keychain.</string>
+    <string name="keyimport_valid_key">Valid public key detected</string>
+    <string name="keyimport_or_divider">or</string>
+    <string name="keyimport_pick_file">Pick from file (.asc / .gpg)</string>
+    <string name="keyimport_file_too_large">File exceeds 2 MB limit</string>
+    <string name="keyimport_button">Import Contact</string>
+
+    <!-- Key detail screen -->
+    <string name="keydetail_title">KEY DETAIL</string>
+    <string name="keydetail_not_found">Key not found.</string>
+    <string name="keydetail_delete_title">Delete key?</string>
+    <string name="keydetail_delete_message">This action cannot be undone. The key will be permanently removed from this device.</string>
+    <string name="keydetail_delete_confirm">Delete</string>
+    <string name="keydetail_type_my_key">My Key</string>
+    <string name="keydetail_type_contact">Contact</string>
+    <string name="keydetail_fingerprint_label">FINGERPRINT</string>
+    <string name="keydetail_created_label">CREATED</string>
+    <string name="keydetail_expires_label">EXPIRES</string>
+    <string name="keydetail_no_expiration">No expiration</string>
+    <string name="keydetail_export_public_key">Export Public Key</string>
+    <string name="keydetail_delete_key">Delete Key</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_danger_zone">Danger Zone</string>
+    <string name="settings_clear_all">Clear All Keys</string>
+    <string name="settings_clearing">Clearing…</string>
+    <string name="settings_about">About</string>
+    <string name="settings_local_first_badge">Local-first · No Cloud · No Accounts</string>
+    <string name="settings_clear_dialog_message">This will permanently delete your identity key and all contact keys. This action cannot be undone.</string>
+    <string name="settings_clear_dialog_confirm">Clear All</string>
+    <string name="settings_version">Version %1$s</string>
+
+    <!-- Learn encryption screen -->
+    <string name="learn_title">Local Encryption</string>
+    <string name="learn_pgp_heading">What is PGP?</string>
+    <string name="learn_pgp_body">Pretty Good Privacy (PGP) is a standard for encrypting and signing data. It uses a pair of mathematically linked keys: a public key you share freely, and a private key you keep secret. Anyone with your public key can send you encrypted messages that only your private key can unlock.</string>
+    <string name="learn_device_heading">Your keys, your device</string>
+    <string name="learn_device_body">Hermes never transmits your keys to any server. Your private key material is generated and stored entirely on this device. There is no account, no cloud backup, and no recovery mechanism — by design. If you lose your device without an exported backup, the keys are gone.</string>
+    <string name="learn_protection_heading">How Hermes protects you</string>
+    <string name="learn_protection_body">All cryptographic operations — key generation, encryption, decryption, and signature verification — happen locally using the Bouncy Castle library. Private key bytes are handled in memory only and never written to logs, network calls, or shared storage. The Android Keystore provides additional hardware-backed protection where available.</string>
+
+    <!-- Plurals -->
+    <plurals name="encrypt_identities_found">
+        <item quantity="one">%1$d Identity Found</item>
+        <item quantity="other">%1$d Identities Found</item>
+    </plurals>
 </resources>
