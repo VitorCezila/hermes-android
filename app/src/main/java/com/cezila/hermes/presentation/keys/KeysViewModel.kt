@@ -71,6 +71,9 @@ class KeysViewModel @Inject constructor(
 
             is KeysUiEvent.OnKeyCardClick ->
                 sendEffect(KeysUiEffect.NavigateToKeyDetail(event.keyId))
+
+            KeysUiEvent.OnSettingsClick ->
+                sendEffect(KeysUiEffect.NavigateToSettings)
         }
     }
 }

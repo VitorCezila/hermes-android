@@ -21,4 +21,10 @@ interface PgpKeyDao {
 
     @Query("DELETE FROM pgp_keys WHERE id = :id")
     suspend fun deleteById(id: String): Int
+
+    @Query("SELECT id FROM pgp_keys WHERE isSecret = 1")
+    suspend fun getAllSecretKeyIds(): List<String>
+
+    @Query("DELETE FROM pgp_keys")
+    suspend fun deleteAll()
 }

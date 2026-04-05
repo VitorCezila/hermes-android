@@ -80,6 +80,14 @@ class KeyRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun clearAllKeys(): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val secretKeyIds = dao.getAllSecretKeyIds()
+            secretKeyIds.forEach { id -> keystoreManager.deleteKey(id) }
+            dao.deleteAll()
+        }
+    }
+
     override suspend fun getArmoredPrivateKey(id: String): Result<String> = withContext(ioDispatcher) {
         runCatching {
             val entity = dao.findById(id)

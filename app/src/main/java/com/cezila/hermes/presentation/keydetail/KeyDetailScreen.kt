@@ -263,5 +263,5 @@ private fun formatFingerprint(fingerprint: String): String =
 
 private fun formatDate(timestamp: Long): String {
     val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-    return sdf.format(Date(timestamp * 1000L))
+    return sdf.format(Date(timestamp))
 }

@@ -48,6 +48,10 @@ import com.cezila.hermes.presentation.onboarding.LearnEncryptionScreen
 import com.cezila.hermes.presentation.onboarding.OnboardingScreen
 import com.cezila.hermes.presentation.onboarding.OnboardingUiEffect
 import com.cezila.hermes.presentation.onboarding.OnboardingViewModel
+import com.cezila.hermes.presentation.settings.SettingsScreen
+import com.cezila.hermes.presentation.settings.SettingsUiEffect
+import com.cezila.hermes.presentation.settings.SettingsUiEvent
+import com.cezila.hermes.presentation.settings.SettingsViewModel
 
 @Composable
 fun HermesNavHost(
@@ -141,6 +145,9 @@ fun HermesNavHost(
 
                         is KeysUiEffect.NavigateToKeyDetail ->
                             navController.navigate(Route.KeyDetail(effect.keyId))
+
+                        KeysUiEffect.NavigateToSettings ->
+                            navController.navigate(Route.Settings)
                     }
                 }
             }
@@ -191,6 +198,34 @@ fun HermesNavHost(
             }
 
             KeyDetailScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+            )
+        }
+
+        composable<Route.Settings> {
+            val viewModel: SettingsViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+            val context = LocalContext.current
+
+            LaunchedEffect(viewModel) {
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                viewModel.onEvent(SettingsUiEvent.OnVersionLoaded(packageInfo.versionName ?: ""))
+            }
+
+            LaunchedEffect(viewModel) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        SettingsUiEffect.NavigateBack ->
+                            navController.popBackStack()
+
+                        is SettingsUiEffect.ShowToast ->
+                            Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            SettingsScreen(
                 state = state,
                 onEvent = viewModel::onEvent,
             )

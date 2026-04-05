@@ -2,6 +2,8 @@ package com.cezila.hermes.presentation.keygeneration
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -42,7 +45,14 @@ import androidx.compose.ui.unit.dp
 import com.cezila.hermes.core.domain.model.KeyAlgorithm
 import com.cezila.hermes.core.ui.theme.CryptoFontFamily
 
-@OptIn(ExperimentalMaterial3Api::class)
+private val EXPIRY_OPTIONS = listOf(
+    0 to "Never",
+    365 to "1 yr",
+    730 to "2 yr",
+    1095 to "3 yr",
+)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun KeyGenerationScreen(
     state: KeyGenerationUiState,
@@ -121,6 +131,23 @@ fun KeyGenerationScreen(
                     ) {
                         Text(algorithm.displayName)
                     }
+                }
+            }
+
+            Text(
+                text = "Key Expiry",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                EXPIRY_OPTIONS.forEach { (days, label) ->
+                    FilterChip(
+                        selected = state.expiryDays == days,
+                        onClick = { onEvent(KeyGenerationUiEvent.OnExpiryChange(days)) },
+                        label = { Text(label) },
+                        enabled = !state.isLoading,
+                    )
                 }
             }
 

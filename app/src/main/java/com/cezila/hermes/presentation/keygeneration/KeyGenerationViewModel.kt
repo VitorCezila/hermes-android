@@ -29,6 +29,9 @@ class KeyGenerationViewModel @Inject constructor(
             is KeyGenerationUiEvent.OnAlgorithmChange ->
                 setState { copy(selectedAlgorithm = event.algorithm) }
 
+            is KeyGenerationUiEvent.OnExpiryChange ->
+                setState { copy(expiryDays = event.days) }
+
             is KeyGenerationUiEvent.OnPassphraseChange ->
                 setState { copy(passphrase = event.value, passphraseError = null, confirmPassphraseError = null) }
 
@@ -55,6 +58,7 @@ class KeyGenerationViewModel @Inject constructor(
                         ownerEmail = currentState.ownerEmail.trim(),
                         algorithm = currentState.selectedAlgorithm,
                         passphrase = passphraseArray,
+                        expiryDays = currentState.expiryDays,
                     )
                 )
                 result.fold(

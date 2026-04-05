@@ -15,6 +15,7 @@ class GenerateKeyPairUseCase(
         val ownerEmail: String,
         val algorithm: KeyAlgorithm,
         val passphrase: CharArray,
+        val expiryDays: Int = 0,
     )
 
     suspend operator fun invoke(params: Params): Result<PgpKey> {
@@ -28,9 +29,16 @@ class GenerateKeyPairUseCase(
             ownerEmail = params.ownerEmail,
             algorithm = params.algorithm,
             passphrase = params.passphrase,
+            expiryDays = params.expiryDays,
         )
 
         val material = materialResult.getOrElse { return Result.failure(it) }
+
+        val expiresAt = if (params.expiryDays > 0) {
+            material.createdAt + params.expiryDays * 24 * 60 * 60 * 1000L
+        } else {
+            null
+        }
 
         val pgpKey = PgpKey(
             id = material.keyId,
@@ -39,7 +47,7 @@ class GenerateKeyPairUseCase(
             ownerEmail = params.ownerEmail,
             algorithm = params.algorithm,
             createdAt = material.createdAt,
-            expiresAt = null,
+            expiresAt = expiresAt,
             isSecret = true,
             armoredPublicKey = material.armoredPublicKey,
         )

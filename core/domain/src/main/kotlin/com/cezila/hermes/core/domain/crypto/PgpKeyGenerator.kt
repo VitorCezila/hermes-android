@@ -16,5 +16,6 @@ interface PgpKeyGenerator {
         ownerEmail: String,
         algorithm: KeyAlgorithm,
         passphrase: CharArray,
+        expiryDays: Int = 0,
     ): Result<GeneratedKeyMaterial>
 }
