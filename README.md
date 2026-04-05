@@ -10,6 +10,17 @@ A local PGP key manager for Android. Manage your cryptographic identities, encry
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="preview/01.png" alt="Screenshot 1" width="200"/>
+  <img src="preview/02.png" alt="Screenshot 2" width="200"/>
+  <img src="preview/03.png" alt="Screenshot 3" width="200"/>
+  <img src="preview/04.png" alt="Screenshot 4" width="200"/>
+</p>
+
+---
+
 ## About
 
 Hermes brings the power of PGP key management to Android, inspired by desktop tools like Kleopatra. It is built around a single principle: **your private keys never leave your device.**
@@ -130,21 +141,6 @@ Key properties:
 - **Typography:** Inter for UI text, Monospace for cryptographic data (hashes, fingerprints)
 - **Depth:** Achieved through tonal layering, not drop shadows
 - **Motion:** Intentional, minimal — no decorative animations
-
----
-
-## Screenshots
-
-<p align="center">
-  <img src="preview/home_screen.png" alt="Home screen" width="200"/>
-  <img src="preview/generate_key_screen.png" alt="Generate key screen" width="200"/>
-  <img src="preview/import_contact_key_screen.png" alt="Import contact key screen" width="200"/>
-</p>
-<p align="center">
-  <img src="preview/encrypt_screen.png" alt="Encrypt screen" width="200"/>
-  <img src="preview/encrypted_message_screen.png" alt="Encrypted message screen" width="200"/>
-  <img src="preview/decrypted_message_screen.png" alt="Decrypted message screen" width="200"/>
-</p>
 
 ---
 
