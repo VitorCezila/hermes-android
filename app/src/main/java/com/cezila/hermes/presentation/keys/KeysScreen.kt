@@ -49,9 +49,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.cezila.hermes.R
 import com.cezila.hermes.core.domain.model.PgpKey
 import com.cezila.hermes.core.ui.theme.CryptoFontFamily
 
@@ -70,7 +72,7 @@ fun KeysScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "VAULT",
+                        text = stringResource(R.string.keys_vault_label),
                         style = MaterialTheme.typography.titleLarge,
                         fontFamily = CryptoFontFamily,
                     )
@@ -79,7 +81,7 @@ fun KeysScreen(
                     IconButton(onClick = { onKeysEvent(KeysUiEvent.OnSettingsClick) }) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.settings),
                         )
                     }
                     if (keysState.hasKeys) {
@@ -87,7 +89,7 @@ fun KeysScreen(
                             IconButton(onClick = { onKeysEvent(KeysUiEvent.OnExportOwnKeyClick) }) {
                                 Icon(
                                     imageVector = Icons.Outlined.IosShare,
-                                    contentDescription = "Export my public key",
+                                    contentDescription = stringResource(R.string.keys_export_my_public_key),
                                 )
                             }
                         }
@@ -95,7 +97,7 @@ fun KeysScreen(
                             IconButton(onClick = { showMenu = true }) {
                                 Icon(
                                     imageVector = Icons.Outlined.MoreVert,
-                                    contentDescription = "More options",
+                                    contentDescription = stringResource(R.string.keys_more_options),
                                 )
                             }
                             DropdownMenu(
@@ -103,7 +105,7 @@ fun KeysScreen(
                                 onDismissRequest = { showMenu = false },
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Export All Public Keys") },
+                                    text = { Text(stringResource(R.string.keys_export_all)) },
                                     onClick = {
                                         showMenu = false
                                         onKeysEvent(KeysUiEvent.OnExportAllKeysClick)
@@ -125,7 +127,7 @@ fun KeysScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,
-                        contentDescription = "Add key",
+                        contentDescription = stringResource(R.string.keys_add_key),
                     )
                 }
             }
@@ -163,7 +165,7 @@ fun KeysScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     item {
-                        SectionHeader(text = "MY KEY")
+                        SectionHeader(text = stringResource(R.string.keys_my_key_section))
                     }
 
                     if (keysState.ownKey != null) {
@@ -183,7 +185,7 @@ fun KeysScreen(
 
                     item {
                         SectionHeader(
-                            text = "CONTACTS",
+                            text = stringResource(R.string.keys_contacts_section),
                             modifier = Modifier.padding(top = 8.dp),
                         )
                     }
@@ -195,7 +197,7 @@ fun KeysScreen(
                                 onValueChange = { onKeysEvent(KeysUiEvent.OnSearchQueryChange(it)) },
                                 placeholder = {
                                     Text(
-                                        text = "Search contacts",
+                                        text = stringResource(R.string.keys_search_contacts),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
@@ -231,7 +233,7 @@ fun KeysScreen(
         ) {
             Column(modifier = Modifier.padding(bottom = 32.dp)) {
                 Text(
-                    text = "Add key",
+                    text = stringResource(R.string.keys_add_key),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 )
@@ -240,7 +242,7 @@ fun KeysScreen(
                 ListItem(
                     headlineContent = {
                         Text(
-                            text = "Generate My Key",
+                            text = stringResource(R.string.keys_generate_my_key),
                             color = MaterialTheme.colorScheme.onSurface.let {
                                 if (generateDisabled) it.copy(alpha = disabledAlpha) else it
                             },
@@ -248,8 +250,8 @@ fun KeysScreen(
                     },
                     supportingContent = {
                         Text(
-                            text = if (generateDisabled) "You already have an identity key"
-                                   else "Create a new RSA-4096 or Ed25519 key pair",
+                            text = if (generateDisabled) stringResource(R.string.keys_already_have_identity)
+                                   else stringResource(R.string.keys_generate_description),
                             color = MaterialTheme.colorScheme.onSurfaceVariant.let {
                                 if (generateDisabled) it.copy(alpha = disabledAlpha) else it
                             },
@@ -271,8 +273,8 @@ fun KeysScreen(
                     },
                 )
                 ListItem(
-                    headlineContent = { Text("Import Contact Key") },
-                    supportingContent = { Text("Add a contact's public key (.asc or paste)") },
+                    headlineContent = { Text(stringResource(R.string.keys_import_contact)) },
+                    supportingContent = { Text(stringResource(R.string.keys_import_contact_description)) },
                     leadingContent = {
                         Icon(
                             imageVector = Icons.Outlined.FileUpload,
@@ -302,13 +304,13 @@ private fun EmptyKeysState(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "The quiet space for\nyour digital truth.",
+                text = stringResource(R.string.tagline),
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Your privacy stays on your device. Start by importing or creating a key.",
+                text = stringResource(R.string.tagline_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -318,18 +320,18 @@ private fun EmptyKeysState(
                 onClick = onGenerateClick,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = "Generate My Key")
+                Text(text = stringResource(R.string.keys_generate_my_key))
             }
             OutlinedButton(
                 onClick = onImportClick,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = "Import Contact Key")
+                Text(text = stringResource(R.string.keys_import_contact))
             }
         }
 
         Text(
-            text = "SECURE INSTANCE  \u2022  NO CLOUD TETHER",
+            text = stringResource(R.string.secure_instance_no_cloud),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp),
@@ -477,7 +479,7 @@ private fun GenerateKeyPromptCard(onClick: () -> Unit, modifier: Modifier = Modi
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "GENERATE YOUR KEY PAIR",
+                text = stringResource(R.string.keys_fab_generate),
                 fontFamily = CryptoFontFamily,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -504,7 +506,7 @@ private fun EmptyContactsCard(onClick: () -> Unit, modifier: Modifier = Modifier
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "IMPORT A CONTACT KEY",
+                text = stringResource(R.string.keys_fab_import),
                 fontFamily = CryptoFontFamily,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

@@ -38,19 +38,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.cezila.hermes.R
 import com.cezila.hermes.core.domain.model.KeyAlgorithm
 import com.cezila.hermes.core.ui.theme.CryptoFontFamily
-
-private val EXPIRY_OPTIONS = listOf(
-    0 to "Never",
-    365 to "1 yr",
-    730 to "2 yr",
-    1095 to "3 yr",
-)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -62,11 +57,18 @@ fun KeyGenerationScreen(
     var passphraseVisible by rememberSaveable { mutableStateOf(false) }
     var confirmPassphraseVisible by rememberSaveable { mutableStateOf(false) }
 
+    val expiryOptions = listOf(
+        0 to stringResource(R.string.keygen_expiry_never),
+        365 to stringResource(R.string.keygen_expiry_1yr),
+        730 to stringResource(R.string.keygen_expiry_2yr),
+        1095 to stringResource(R.string.keygen_expiry_3yr),
+    )
+
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Generate Key") },
+                title = { Text(stringResource(R.string.keygen_title)) },
                 navigationIcon = {
                     IconButton(
                         onClick = { onEvent(KeyGenerationUiEvent.OnBack) },
@@ -74,7 +76,7 @@ fun KeyGenerationScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                         )
                     }
                 },
@@ -95,7 +97,7 @@ fun KeyGenerationScreen(
             OutlinedTextField(
                 value = state.ownerName,
                 onValueChange = { onEvent(KeyGenerationUiEvent.OnNameChange(it)) },
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.keygen_name_label)) },
                 singleLine = true,
                 isError = state.nameError != null,
                 supportingText = state.nameError?.let { { Text(it) } },
@@ -106,7 +108,7 @@ fun KeyGenerationScreen(
             OutlinedTextField(
                 value = state.ownerEmail,
                 onValueChange = { onEvent(KeyGenerationUiEvent.OnEmailChange(it)) },
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.keygen_email_label)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 isError = state.emailError != null,
@@ -116,7 +118,7 @@ fun KeyGenerationScreen(
             )
 
             Text(
-                text = "Algorithm",
+                text = stringResource(R.string.keygen_algorithm_label),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -135,13 +137,13 @@ fun KeyGenerationScreen(
             }
 
             Text(
-                text = "Key Expiry",
+                text = stringResource(R.string.keygen_expiry_label),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                EXPIRY_OPTIONS.forEach { (days, label) ->
+                expiryOptions.forEach { (days, label) ->
                     FilterChip(
                         selected = state.expiryDays == days,
                         onClick = { onEvent(KeyGenerationUiEvent.OnExpiryChange(days)) },
@@ -154,7 +156,7 @@ fun KeyGenerationScreen(
             OutlinedTextField(
                 value = state.passphrase,
                 onValueChange = { onEvent(KeyGenerationUiEvent.OnPassphraseChange(it)) },
-                label = { Text("Passphrase") },
+                label = { Text(stringResource(R.string.passphrase)) },
                 singleLine = true,
                 visualTransformation = if (passphraseVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -162,7 +164,8 @@ fun KeyGenerationScreen(
                     IconButton(onClick = { passphraseVisible = !passphraseVisible }) {
                         Icon(
                             imageVector = if (passphraseVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                            contentDescription = if (passphraseVisible) "Hide passphrase" else "Show passphrase",
+                            contentDescription = if (passphraseVisible) stringResource(R.string.hide_passphrase)
+                                                 else stringResource(R.string.show_passphrase),
                         )
                     }
                 },
@@ -175,7 +178,7 @@ fun KeyGenerationScreen(
             OutlinedTextField(
                 value = state.confirmPassphrase,
                 onValueChange = { onEvent(KeyGenerationUiEvent.OnConfirmPassphraseChange(it)) },
-                label = { Text("Confirm Passphrase") },
+                label = { Text(stringResource(R.string.confirm_passphrase)) },
                 singleLine = true,
                 visualTransformation = if (confirmPassphraseVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -183,7 +186,8 @@ fun KeyGenerationScreen(
                     IconButton(onClick = { confirmPassphraseVisible = !confirmPassphraseVisible }) {
                         Icon(
                             imageVector = if (confirmPassphraseVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                            contentDescription = if (confirmPassphraseVisible) "Hide passphrase" else "Show passphrase",
+                            contentDescription = if (confirmPassphraseVisible) stringResource(R.string.hide_passphrase)
+                                                 else stringResource(R.string.show_passphrase),
                         )
                     }
                 },
@@ -194,14 +198,14 @@ fun KeyGenerationScreen(
             )
 
             Text(
-                text = "Your private key is stored encrypted on this device only.",
+                text = stringResource(R.string.keygen_private_key_notice),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             if (state.isLoading) {
                 Text(
-                    text = "Generating your key pair. This may take a few seconds.",
+                    text = stringResource(R.string.keygen_generating),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -212,7 +216,7 @@ fun KeyGenerationScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isLoading,
             ) {
-                Text("Generate Key")
+                Text(stringResource(R.string.keygen_button))
             }
 
             if (state.isLoading) {
@@ -234,7 +238,7 @@ fun KeyGenerationScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "KEY MATERIAL STAYS ON DEVICE",
+                    text = stringResource(R.string.keygen_on_device_badge),
                     style = MaterialTheme.typography.labelSmall,
                     fontFamily = CryptoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

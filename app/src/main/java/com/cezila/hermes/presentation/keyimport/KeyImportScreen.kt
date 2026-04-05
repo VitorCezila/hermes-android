@@ -41,7 +41,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.cezila.hermes.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,6 +60,7 @@ fun KeyImportScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val fileTooLargeMessage = stringResource(R.string.keyimport_file_too_large)
 
     val fileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -83,7 +86,7 @@ fun KeyImportScreen(
             }
 
             if (size > MAX_FILE_SIZE_BYTES) {
-                snackbarHostState.showSnackbar("File exceeds 2 MB limit")
+                snackbarHostState.showSnackbar(fileTooLargeMessage)
             } else {
                 onEvent(KeyImportUiEvent.OnFileRead(content, fileName))
             }
@@ -95,7 +98,7 @@ fun KeyImportScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Import Contact Key") },
+                title = { Text(stringResource(R.string.keyimport_title)) },
                 navigationIcon = {
                     IconButton(
                         onClick = { onEvent(KeyImportUiEvent.OnBack) },
@@ -103,7 +106,7 @@ fun KeyImportScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                         )
                     }
                 },
@@ -124,8 +127,8 @@ fun KeyImportScreen(
             OutlinedTextField(
                 value = state.armoredText,
                 onValueChange = { onEvent(KeyImportUiEvent.OnArmoredTextChange(it)) },
-                label = { Text("PGP Public Key Block") },
-                placeholder = { Text("-----BEGIN PGP PUBLIC KEY BLOCK-----") },
+                label = { Text(stringResource(R.string.keyimport_pgp_block_label)) },
+                placeholder = { Text(stringResource(R.string.keyimport_pgp_block_hint)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp),
@@ -134,13 +137,13 @@ fun KeyImportScreen(
                     when (val status = state.validationStatus) {
                         is ValidationStatus.Invalid -> Text(
                             text = when (status.reason) {
-                                ValidationError.InvalidFormat -> "Invalid PGP public key format"
-                                ValidationError.SecretKeyDetected -> "This contains a private key. Only public keys can be imported."
-                                ValidationError.DuplicateKey -> "This key is already in your keychain."
+                                ValidationError.InvalidFormat -> stringResource(R.string.keyimport_error_invalid_format)
+                                ValidationError.SecretKeyDetected -> stringResource(R.string.keyimport_error_private_key)
+                                ValidationError.DuplicateKey -> stringResource(R.string.keyimport_error_duplicate)
                             },
                         )
                         ValidationStatus.Valid -> Text(
-                            text = "Valid public key detected",
+                            text = stringResource(R.string.keyimport_valid_key),
                             color = MaterialTheme.colorScheme.primary,
                         )
                         else -> {}
@@ -172,7 +175,11 @@ fun KeyImportScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 HorizontalDivider(modifier = Modifier.weight(1f))
-                Text(text = "or", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = stringResource(R.string.keyimport_or_divider),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 HorizontalDivider(modifier = Modifier.weight(1f))
             }
 
@@ -186,7 +193,7 @@ fun KeyImportScreen(
                     contentDescription = null,
                     modifier = Modifier.padding(end = 8.dp),
                 )
-                Text("Pick from file (.asc / .gpg)")
+                Text(stringResource(R.string.keyimport_pick_file))
             }
 
             if (state.fileName != null) {
@@ -202,7 +209,7 @@ fun KeyImportScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = state.validationStatus == ValidationStatus.Valid && !state.isLoading,
             ) {
-                Text("Import Contact")
+                Text(stringResource(R.string.keyimport_button))
             }
 
             if (state.isLoading) {

@@ -47,6 +47,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -55,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cezila.hermes.R
 import com.cezila.hermes.core.domain.model.PgpKey
 import com.cezila.hermes.core.ui.theme.Clay
 import com.cezila.hermes.core.ui.theme.CryptoFontFamily
@@ -88,7 +91,7 @@ fun EncryptScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "HERMES",
+                        text = stringResource(R.string.encrypt_hermes_label),
                         fontFamily = CryptoFontFamily,
                         style = MaterialTheme.typography.titleLarge,
                     )
@@ -96,7 +99,7 @@ fun EncryptScreen(
                 actions = {
                     Icon(
                         imageVector = Icons.Outlined.Person,
-                        contentDescription = "Profile",
+                        contentDescription = stringResource(R.string.encrypt_profile),
                         modifier = Modifier.padding(end = 12.dp),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
@@ -117,7 +120,7 @@ fun EncryptScreen(
             // Hero section
             Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
                 Text(
-                    text = "Secure your\nmessage.",
+                    text = stringResource(R.string.encrypt_title),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
                         lineHeight = 44.sp,
@@ -126,7 +129,7 @@ fun EncryptScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Select a recipient and prepare your payload\nfor end-to-end cryptographic delivery.",
+                    text = stringResource(R.string.encrypt_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -142,14 +145,18 @@ fun EncryptScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "RECIPIENT SELECTION",
+                        text = stringResource(R.string.encrypt_recipient_section),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         letterSpacing = 1.sp,
                     )
                     if (state.contacts.isNotEmpty()) {
                         Text(
-                            text = "${state.contacts.size} ${if (state.contacts.size == 1) "Identity" else "Identities"} Found",
+                            text = pluralStringResource(
+                                R.plurals.encrypt_identities_found,
+                                state.contacts.size,
+                                state.contacts.size,
+                            ),
                             style = MaterialTheme.typography.labelSmall,
                             color = Clay,
                             fontFamily = CryptoFontFamily,
@@ -161,7 +168,7 @@ fun EncryptScreen(
 
                 if (state.contacts.isEmpty()) {
                     Text(
-                        text = "No contact keys imported yet. Import a contact's public key to encrypt for them.",
+                        text = stringResource(R.string.encrypt_no_contacts),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -186,7 +193,7 @@ fun EncryptScreen(
             // Payload section
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 Text(
-                    text = "PAYLOAD",
+                    text = stringResource(R.string.encrypt_payload_section),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 1.sp,
@@ -199,7 +206,7 @@ fun EncryptScreen(
                         onValueChange = { onEvent(EncryptUiEvent.OnMessageChanged(it)) },
                         placeholder = {
                             Text(
-                                "Write your message here...",
+                                stringResource(R.string.encrypt_message_hint),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         },
@@ -211,7 +218,7 @@ fun EncryptScreen(
                         enabled = !state.isLoading,
                     )
                     Text(
-                        text = "AES-256 ENABLED",
+                        text = stringResource(R.string.encrypt_aes_badge),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontFamily = CryptoFontFamily,
@@ -257,7 +264,7 @@ fun EncryptScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
-                                    contentDescription = "Remove file",
+                                    contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
@@ -287,12 +294,12 @@ fun EncryptScreen(
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                             Text(
-                                text = "File Archive",
+                                text = stringResource(R.string.encrypt_file_archive),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
-                                text = "Drop larger payloads or click to browse",
+                                text = stringResource(R.string.encrypt_file_drop_hint),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
@@ -334,7 +341,7 @@ fun EncryptScreen(
                     modifier = Modifier.padding(end = 8.dp),
                 )
                 Text(
-                    text = "Sign & Encrypt",
+                    text = stringResource(R.string.encrypt_sign_and_encrypt),
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
@@ -343,7 +350,7 @@ fun EncryptScreen(
             if (state.selectedRecipient != null && state.ownKey != null) {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "DIGITAL SIGNATURE WILL BE APPENDED TO ${state.selectedRecipient.ownerName.uppercase()}",
+                    text = stringResource(R.string.encrypt_sig_footer, state.selectedRecipient.ownerName.uppercase()),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontFamily = CryptoFontFamily,
@@ -429,19 +436,19 @@ private fun PassphraseBottomSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Enter Passphrase",
+                text = stringResource(R.string.encrypt_dialog_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = "Required to sign the message with your identity key.",
+                text = stringResource(R.string.encrypt_dialog_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             OutlinedTextField(
                 value = passphrase,
                 onValueChange = { passphrase = it },
-                label = { Text("Passphrase") },
+                label = { Text(stringResource(R.string.passphrase)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -455,7 +462,7 @@ private fun PassphraseBottomSheet(
                     passphrase = ""
                     onDismiss()
                 }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
                 Spacer(Modifier.width(8.dp))
                 Button(
@@ -467,7 +474,7 @@ private fun PassphraseBottomSheet(
                     enabled = passphrase.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(containerColor = Clay),
                 ) {
-                    Text("Confirm", color = androidx.compose.ui.graphics.Color.White)
+                    Text(stringResource(R.string.confirm), color = androidx.compose.ui.graphics.Color.White)
                 }
             }
         }
@@ -495,7 +502,7 @@ private fun EncryptedOutputBottomSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Encrypted Message",
+                text = stringResource(R.string.encrypt_result_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -530,13 +537,13 @@ private fun EncryptedOutputBottomSheet(
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = Clay),
                 ) {
-                    Text("Copy", color = androidx.compose.ui.graphics.Color.White)
+                    Text(stringResource(R.string.copy), color = androidx.compose.ui.graphics.Color.White)
                 }
                 TextButton(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Done")
+                    Text(stringResource(R.string.done))
                 }
             }
         }

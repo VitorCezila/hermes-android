@@ -24,7 +24,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.cezila.hermes.R
 import com.cezila.hermes.core.ui.theme.CryptoFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +42,7 @@ fun SettingsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "SETTINGS",
+                        text = stringResource(R.string.settings_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontFamily = CryptoFontFamily,
                     )
@@ -49,7 +51,7 @@ fun SettingsScreen(
                     IconButton(onClick = { onEvent(SettingsUiEvent.OnBackClick) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                         )
                     }
                 },
@@ -66,7 +68,7 @@ fun SettingsScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            SectionHeader("Danger Zone")
+            SectionHeader(stringResource(R.string.settings_danger_zone))
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -76,7 +78,8 @@ fun SettingsScreen(
                 enabled = !state.isClearingKeys,
             ) {
                 Text(
-                    text = if (state.isClearingKeys) "Clearing…" else "Clear All Keys",
+                    text = if (state.isClearingKeys) stringResource(R.string.settings_clearing)
+                           else stringResource(R.string.settings_clear_all),
                     color = MaterialTheme.colorScheme.error,
                 )
             }
@@ -85,13 +88,13 @@ fun SettingsScreen(
             HorizontalDivider()
             Spacer(modifier = Modifier.height(28.dp))
 
-            SectionHeader("About")
+            SectionHeader(stringResource(R.string.settings_about))
 
             Spacer(modifier = Modifier.height(12.dp))
 
             if (state.appVersion.isNotEmpty()) {
                 Text(
-                    text = "Version ${state.appVersion}",
+                    text = stringResource(R.string.settings_version, state.appVersion),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -99,7 +102,7 @@ fun SettingsScreen(
             }
 
             Text(
-                text = "Local-first · No Cloud · No Accounts",
+                text = stringResource(R.string.settings_local_first_badge),
                 style = MaterialTheme.typography.bodySmall,
                 fontFamily = CryptoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -110,18 +113,18 @@ fun SettingsScreen(
     if (state.showClearAllConfirmation) {
         AlertDialog(
             onDismissRequest = { onEvent(SettingsUiEvent.OnClearAllKeysDismiss) },
-            title = { Text("Clear All Keys") },
+            title = { Text(stringResource(R.string.settings_clear_all)) },
             text = {
-                Text("This will permanently delete your identity key and all contact keys. This action cannot be undone.")
+                Text(stringResource(R.string.settings_clear_dialog_message))
             },
             confirmButton = {
                 TextButton(onClick = { onEvent(SettingsUiEvent.OnClearAllKeysConfirm) }) {
-                    Text("Clear All", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.settings_clear_dialog_confirm), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { onEvent(SettingsUiEvent.OnClearAllKeysDismiss) }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
         )
