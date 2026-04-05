@@ -18,11 +18,11 @@ class BouncyCastlePgpDecryptorTest {
     private val passphrase = "test-passphrase-123".toCharArray()
     private val plaintext = "Hello, this is a secret message!"
 
-    // RSA_4096 is used because the single-key ring it produces has isEncryptionKey=true,
-    // which is required by BouncyCastlePgpEncryptor.parseRecipientPublicKey.
-    // (Ed25519/EdDSA keys return isEncryptionKey=false regardless of key flags.)
     private suspend fun generateKeyMaterial(name: String, email: String) =
         generator.generate(name, email, KeyAlgorithm.RSA_4096, passphrase).getOrThrow()
+
+    private suspend fun generateEd25519KeyMaterial(name: String, email: String) =
+        generator.generate(name, email, KeyAlgorithm.ED25519, passphrase).getOrThrow()
 
     // --- Round-trip: text ---
 
@@ -207,6 +207,63 @@ class BouncyCastlePgpDecryptorTest {
 
         assertTrue(result.signatureStatus is SignatureStatus.Valid)
     }
+
+    // --- Ed25519 round-trip tests ---
+
+    @Test
+    fun encryptAndSign_ed25519RecipientKey_doesNotThrow() = runTest {
+        val alice = generateEd25519KeyMaterial("Alice", "alice@example.com")
+        val bob = generateEd25519KeyMaterial("Bob", "bob@example.com")
+        val result = encryptor.encryptAndSign(
+            plaintext = plaintext,
+            recipientArmoredPublicKey = alice.armoredPublicKey,
+            signerArmoredPrivateKey = bob.armoredPrivateKey,
+            passphrase = passphrase,
+        )
+        assertTrue("Encrypt to Ed25519 key must succeed", result.isSuccess)
+    }
+
+    @Test
+    fun decryptAndVerify_ed25519Keys_roundTrip_returnsOriginalPlaintext() = runTest {
+        val alice = generateEd25519KeyMaterial("Alice", "alice@example.com")
+        val bob = generateEd25519KeyMaterial("Bob", "bob@example.com")
+        val ciphertext = encryptor.encryptAndSign(
+            plaintext = plaintext,
+            recipientArmoredPublicKey = alice.armoredPublicKey,
+            signerArmoredPrivateKey = bob.armoredPrivateKey,
+            passphrase = passphrase,
+        ).getOrThrow()
+        val result = decryptor.decryptAndVerify(
+            ciphertext = ciphertext,
+            recipientArmoredPrivateKey = alice.armoredPrivateKey,
+            passphrase = passphrase,
+            knownPublicKeys = listOf(bob.armoredPublicKey),
+        ).getOrThrow()
+        assertEquals(plaintext, result.plaintext)
+    }
+
+    @Test
+    fun decryptFileAndVerify_ed25519Keys_roundTrip_returnsOriginalBytes() = runTest {
+        val alice = generateEd25519KeyMaterial("Alice", "alice@example.com")
+        val bob = generateEd25519KeyMaterial("Bob", "bob@example.com")
+        val fileBytes = "secret file content".toByteArray()
+        val encrypted = encryptor.encryptFileAndSign(
+            bytes = fileBytes,
+            fileName = "secret.txt",
+            recipientArmoredPublicKey = alice.armoredPublicKey,
+            signerArmoredPrivateKey = bob.armoredPrivateKey,
+            passphrase = passphrase,
+        ).getOrThrow()
+        val result = decryptor.decryptFileAndVerify(
+            ciphertextBytes = encrypted,
+            recipientArmoredPrivateKey = alice.armoredPrivateKey,
+            passphrase = passphrase,
+            knownPublicKeys = listOf(bob.armoredPublicKey),
+        ).getOrThrow()
+        assertTrue(result.plaintextBytes!!.contentEquals(fileBytes))
+    }
+
+    // --- Round-trip: file (RSA) ---
 
     @Test
     fun decryptFileAndVerify_wrongPassphrase_returnsFailure() = runTest {
