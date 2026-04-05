@@ -36,6 +36,7 @@ class BouncyCastlePgpKeyGenerator : PgpKeyGenerator {
         ownerEmail: String,
         algorithm: KeyAlgorithm,
         passphrase: CharArray,
+        expiryDays: Int,
     ): Result<GeneratedKeyMaterial> = runCatching {
         val createdAt = System.currentTimeMillis()
         val creationDate = Date(createdAt)
@@ -80,6 +81,9 @@ class BouncyCastlePgpKeyGenerator : PgpKeyGenerator {
                 intArrayOf(HashAlgorithmTags.SHA256, HashAlgorithmTags.SHA384, HashAlgorithmTags.SHA512),
             )
             setFeature(false, Features.FEATURE_MODIFICATION_DETECTION)
+            if (expiryDays > 0) {
+                setKeyExpirationTime(false, expiryDays * 24L * 60 * 60)
+            }
         }
 
         val keyRingGenerator = PGPKeyRingGenerator(
@@ -97,6 +101,9 @@ class BouncyCastlePgpKeyGenerator : PgpKeyGenerator {
             val encSubKeyPair = generateX25519KeyPair(creationDate)
             val encSubpackets = PGPSignatureSubpacketGenerator().apply {
                 setKeyFlags(false, KeyFlags.ENCRYPT_COMMS or KeyFlags.ENCRYPT_STORAGE)
+                if (expiryDays > 0) {
+                    setKeyExpirationTime(false, expiryDays * 24L * 60 * 60)
+                }
             }.generate()
             keyRingGenerator.addSubKey(encSubKeyPair, encSubpackets, null)
         }

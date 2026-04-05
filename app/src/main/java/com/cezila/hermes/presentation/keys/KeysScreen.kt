@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.Key
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -75,6 +76,12 @@ fun KeysScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = { onKeysEvent(KeysUiEvent.OnSettingsClick) }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Settings",
+                        )
+                    }
                     if (keysState.hasKeys) {
                         if (keysState.ownKey != null) {
                             IconButton(onClick = { onKeysEvent(KeysUiEvent.OnExportOwnKeyClick) }) {

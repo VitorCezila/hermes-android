@@ -5,6 +5,7 @@ import com.cezila.hermes.core.domain.crypto.PgpEncryptor
 import com.cezila.hermes.core.domain.crypto.PgpKeyGenerator
 import com.cezila.hermes.core.domain.crypto.PgpKeyParser
 import com.cezila.hermes.core.domain.repository.KeyRepository
+import com.cezila.hermes.core.domain.usecase.ClearAllKeysUseCase
 import com.cezila.hermes.core.domain.usecase.DecryptAndVerifyUseCase
 import com.cezila.hermes.core.domain.usecase.DeleteKeyUseCase
 import com.cezila.hermes.core.domain.usecase.EncryptAndSignUseCase
@@ -63,4 +64,9 @@ object UseCaseModule {
         keyRepository: KeyRepository,
         pgpDecryptor: PgpDecryptor,
     ): DecryptAndVerifyUseCase = DecryptAndVerifyUseCase(keyRepository, pgpDecryptor)
+
+    @Provides
+    fun provideClearAllKeysUseCase(
+        keyRepository: KeyRepository,
+    ): ClearAllKeysUseCase = ClearAllKeysUseCase(keyRepository)
 }

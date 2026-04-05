@@ -19,4 +19,6 @@ interface KeyRepository {
     suspend fun deleteKey(id: String): Result<Unit>
 
     suspend fun getArmoredPrivateKey(id: String): Result<String>
+
+    suspend fun clearAllKeys(): Result<Unit>
 }

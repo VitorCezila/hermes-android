@@ -32,6 +32,7 @@ sealed interface KeysUiEvent : UiEvent {
     data object OnExportOwnKeyClick : KeysUiEvent
     data object OnExportAllKeysClick : KeysUiEvent
     data class OnKeyCardClick(val keyId: String) : KeysUiEvent
+    data object OnSettingsClick : KeysUiEvent
 }
 
 sealed interface KeysUiEffect : UiEffect {
@@ -39,4 +40,5 @@ sealed interface KeysUiEffect : UiEffect {
     data object NavigateToKeyImport : KeysUiEffect
     data class SharePublicKey(val armoredText: String) : KeysUiEffect
     data class NavigateToKeyDetail(val keyId: String) : KeysUiEffect
+    data object NavigateToSettings : KeysUiEffect
 }

@@ -8,7 +8,8 @@ import com.cezila.hermes.core.domain.mvi.UiState
 data class KeyGenerationUiState(
     val ownerName: String = "",
     val ownerEmail: String = "",
-    val selectedAlgorithm: KeyAlgorithm = KeyAlgorithm.RSA_4096,
+    val selectedAlgorithm: KeyAlgorithm = KeyAlgorithm.ED25519,
+    val expiryDays: Int = 0,
     val passphrase: String = "",
     val confirmPassphrase: String = "",
     val isLoading: Boolean = false,
@@ -25,6 +26,7 @@ sealed interface KeyGenerationUiEvent : UiEvent {
     data class OnAlgorithmChange(val algorithm: KeyAlgorithm) : KeyGenerationUiEvent
     data class OnPassphraseChange(val value: String) : KeyGenerationUiEvent
     data class OnConfirmPassphraseChange(val value: String) : KeyGenerationUiEvent
+    data class OnExpiryChange(val days: Int) : KeyGenerationUiEvent
     data object OnGenerateClick : KeyGenerationUiEvent
     data object OnBack : KeyGenerationUiEvent
 }
