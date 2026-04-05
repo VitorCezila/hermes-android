@@ -1,21 +1,16 @@
 package com.cezila.hermes.presentation.keygeneration
 
-import android.util.Patterns
 import app.cash.turbine.test
 import com.cezila.hermes.core.domain.model.KeyAlgorithm
 import com.cezila.hermes.core.domain.model.PgpKey
 import com.cezila.hermes.core.domain.usecase.GenerateKeyPairUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.slot
-import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -27,8 +22,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class KeyGenerationViewModelTest {
@@ -36,9 +29,6 @@ class KeyGenerationViewModelTest {
     private val generateKeyPairUseCase: GenerateKeyPairUseCase = mockk()
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: KeyGenerationViewModel
-
-    private val mockEmailPattern: Pattern = mockk()
-    private val mockMatcher: Matcher = mockk()
 
     private val fakePgpKey = PgpKey(
         id = "0xAABB",
@@ -55,16 +45,11 @@ class KeyGenerationViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        mockkStatic(Patterns::class)
-        every { Patterns.EMAIL_ADDRESS } returns mockEmailPattern
-        every { mockEmailPattern.matcher(any()) } returns mockMatcher
-        every { mockMatcher.matches() } returns true
-        viewModel = KeyGenerationViewModel(generateKeyPairUseCase)
+        viewModel = KeyGenerationViewModel(generateKeyPairUseCase, testDispatcher)
     }
 
     @After
     fun teardown() {
-        unmockkStatic(Patterns::class)
         Dispatchers.resetMain()
     }
 
@@ -91,12 +76,11 @@ class KeyGenerationViewModelTest {
 
     @Test
     fun onEmailChange_updatesStateAndClearsEmailError() {
-        every { mockMatcher.matches() } returns false
         viewModel.onEvent(KeyGenerationUiEvent.OnNameChange("Alice"))
+        viewModel.onEvent(KeyGenerationUiEvent.OnEmailChange("not-an-email"))
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
         assertNotNull(viewModel.state.value.emailError)
 
-        every { mockMatcher.matches() } returns true
         viewModel.onEvent(KeyGenerationUiEvent.OnEmailChange("alice@example.com"))
 
         assertEquals("alice@example.com", viewModel.state.value.ownerEmail)
@@ -158,8 +142,8 @@ class KeyGenerationViewModelTest {
 
     @Test
     fun validate_invalidEmail_setsEmailError() {
-        every { mockMatcher.matches() } returns false
         viewModel.onEvent(KeyGenerationUiEvent.OnNameChange("Alice"))
+        viewModel.onEvent(KeyGenerationUiEvent.OnEmailChange("not-an-email"))
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
 
         assertNotNull(viewModel.state.value.emailError)
@@ -187,8 +171,8 @@ class KeyGenerationViewModelTest {
 
     @Test
     fun validate_multipleErrors_setsAllErrors() {
-        every { mockMatcher.matches() } returns false
         viewModel.onEvent(KeyGenerationUiEvent.OnNameChange("   "))
+        viewModel.onEvent(KeyGenerationUiEvent.OnEmailChange("not-an-email"))
         viewModel.onEvent(KeyGenerationUiEvent.OnPassphraseChange("short"))
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
 
@@ -214,7 +198,6 @@ class KeyGenerationViewModelTest {
 
         viewModel.effect.test {
             viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
-            advanceUntilIdle()
             assertEquals(KeyGenerationUiEffect.NavigateToKeys, awaitItem())
         }
     }
@@ -225,7 +208,6 @@ class KeyGenerationViewModelTest {
         setValidState()
 
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
-        advanceUntilIdle()
 
         assertFalse(viewModel.state.value.isLoading)
     }
@@ -236,7 +218,6 @@ class KeyGenerationViewModelTest {
         setValidState()
 
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
-        advanceUntilIdle()
 
         assertEquals("generation failed", viewModel.state.value.generalError)
         assertFalse(viewModel.state.value.isLoading)
@@ -248,7 +229,6 @@ class KeyGenerationViewModelTest {
         setValidState()
 
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
-        advanceUntilIdle()
 
         assertEquals("Key generation failed", viewModel.state.value.generalError)
     }
@@ -260,7 +240,6 @@ class KeyGenerationViewModelTest {
         setValidState()
 
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
-        advanceUntilIdle()
 
         assertTrue(paramsSlot.captured.passphrase.all { it == ' ' })
     }
@@ -275,7 +254,6 @@ class KeyGenerationViewModelTest {
         viewModel.onEvent(KeyGenerationUiEvent.OnPassphraseChange("correct-horse"))
         viewModel.onEvent(KeyGenerationUiEvent.OnConfirmPassphraseChange("correct-horse"))
         viewModel.onEvent(KeyGenerationUiEvent.OnGenerateClick)
-        advanceUntilIdle()
 
         assertEquals("Alice", paramsSlot.captured.ownerName)
         assertEquals("alice@example.com", paramsSlot.captured.ownerEmail)

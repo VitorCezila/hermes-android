@@ -12,7 +12,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -55,7 +54,7 @@ class KeyImportViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = KeyImportViewModel(importPublicKeyUseCase, pgpKeyParser)
+        viewModel = KeyImportViewModel(importPublicKeyUseCase, pgpKeyParser, testDispatcher)
     }
 
     @After
@@ -68,7 +67,6 @@ class KeyImportViewModelTest {
     @Test
     fun emptyText_keepsEmptyStatus() = runTest {
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange(""))
-        advanceUntilIdle()
 
         assertEquals(ValidationStatus.Empty, viewModel.state.value.validationStatus)
     }
@@ -76,7 +74,6 @@ class KeyImportViewModelTest {
     @Test
     fun blankText_keepsEmptyStatus() = runTest {
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange("   "))
-        advanceUntilIdle()
 
         assertEquals(ValidationStatus.Empty, viewModel.state.value.validationStatus)
     }
@@ -84,7 +81,6 @@ class KeyImportViewModelTest {
     @Test
     fun secretKeyBlock_setsSecretKeyDetected() = runTest {
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange(SECRET_KEY_BLOCK))
-        advanceUntilIdle()
 
         assertEquals(
             ValidationStatus.Invalid(ValidationError.SecretKeyDetected),
@@ -98,7 +94,6 @@ class KeyImportViewModelTest {
         coEvery { pgpKeyParser.parsePublicKey(any()) } returns Result.failure(IllegalArgumentException("bad key"))
 
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange("not a pgp key"))
-        advanceUntilIdle()
 
         assertEquals(
             ValidationStatus.Invalid(ValidationError.InvalidFormat),
@@ -111,7 +106,6 @@ class KeyImportViewModelTest {
         coEvery { pgpKeyParser.parsePublicKey(any()) } returns Result.success(fakeParsedKey)
 
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange(VALID_ARMORED_KEY))
-        advanceUntilIdle()
 
         assertEquals(ValidationStatus.Valid, viewModel.state.value.validationStatus)
     }
@@ -123,7 +117,6 @@ class KeyImportViewModelTest {
         coEvery { pgpKeyParser.parsePublicKey(any()) } returns Result.success(fakeParsedKey)
 
         viewModel.onEvent(KeyImportUiEvent.OnFileRead(VALID_ARMORED_KEY, "alice.asc"))
-        advanceUntilIdle()
 
         assertEquals(VALID_ARMORED_KEY, viewModel.state.value.armoredText)
         assertEquals("alice.asc", viewModel.state.value.fileName)
@@ -136,7 +129,6 @@ class KeyImportViewModelTest {
 
         viewModel.onEvent(KeyImportUiEvent.OnFileRead(VALID_ARMORED_KEY, "alice.asc"))
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange("different text"))
-        advanceUntilIdle()
 
         assertEquals(null, viewModel.state.value.fileName)
     }
@@ -146,7 +138,6 @@ class KeyImportViewModelTest {
     @Test
     fun importClick_whenNotValid_doesNotCallUseCase() = runTest {
         viewModel.onEvent(KeyImportUiEvent.OnImportClick)
-        advanceUntilIdle()
 
         coVerify(exactly = 0) { importPublicKeyUseCase(any()) }
     }
@@ -157,11 +148,9 @@ class KeyImportViewModelTest {
         coEvery { importPublicKeyUseCase(any()) } returns Result.success(fakePgpKey)
 
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange(VALID_ARMORED_KEY))
-        advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onEvent(KeyImportUiEvent.OnImportClick)
-            advanceUntilIdle()
             assertEquals(KeyImportUiEffect.ImportSuccess, awaitItem())
         }
     }
@@ -172,9 +161,7 @@ class KeyImportViewModelTest {
         coEvery { importPublicKeyUseCase(any()) } returns Result.success(fakePgpKey)
 
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange(VALID_ARMORED_KEY))
-        advanceUntilIdle()
         viewModel.onEvent(KeyImportUiEvent.OnImportClick)
-        advanceUntilIdle()
 
         assertFalse(viewModel.state.value.isLoading)
     }
@@ -185,9 +172,7 @@ class KeyImportViewModelTest {
         coEvery { importPublicKeyUseCase(any()) } returns Result.failure(android.database.sqlite.SQLiteConstraintException("UNIQUE constraint failed"))
 
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange(VALID_ARMORED_KEY))
-        advanceUntilIdle()
         viewModel.onEvent(KeyImportUiEvent.OnImportClick)
-        advanceUntilIdle()
 
         assertEquals(
             ValidationStatus.Invalid(ValidationError.DuplicateKey),
@@ -201,9 +186,7 @@ class KeyImportViewModelTest {
         coEvery { importPublicKeyUseCase(any()) } returns Result.failure(RuntimeException("unexpected"))
 
         viewModel.onEvent(KeyImportUiEvent.OnArmoredTextChange(VALID_ARMORED_KEY))
-        advanceUntilIdle()
         viewModel.onEvent(KeyImportUiEvent.OnImportClick)
-        advanceUntilIdle()
 
         assertEquals(
             ValidationStatus.Invalid(ValidationError.InvalidFormat),

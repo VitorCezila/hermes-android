@@ -2,10 +2,12 @@ package com.cezila.hermes.presentation.keyimport
 
 import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.viewModelScope
+import com.cezila.hermes.core.data.di.IoDispatcher
 import com.cezila.hermes.core.domain.crypto.PgpKeyParser
 import com.cezila.hermes.core.domain.usecase.ImportPublicKeyUseCase
 import com.cezila.hermes.presentation.mvi.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class KeyImportViewModel @Inject constructor(
     private val importPublicKeyUseCase: ImportPublicKeyUseCase,
     private val pgpKeyParser: PgpKeyParser,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<KeyImportUiState, KeyImportUiEvent, KeyImportUiEffect>(
     initialState = KeyImportUiState(),
 ) {
@@ -46,7 +49,7 @@ class KeyImportViewModel @Inject constructor(
             return
         }
         setState { copy(validationStatus = ValidationStatus.Validating) }
-        validationJob = viewModelScope.launch(Dispatchers.IO) {
+        validationJob = viewModelScope.launch(ioDispatcher) {
             if (text.contains("-----BEGIN PGP PRIVATE KEY BLOCK-----")) {
                 setState { copy(validationStatus = ValidationStatus.Invalid(ValidationError.SecretKeyDetected)) }
                 return@launch
@@ -60,7 +63,7 @@ class KeyImportViewModel @Inject constructor(
 
     private fun importKey() {
         if (currentState.validationStatus != ValidationStatus.Valid) return
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             setState { copy(isLoading = true) }
             try {
                 importPublicKeyUseCase(ImportPublicKeyUseCase.Params(currentState.armoredText))

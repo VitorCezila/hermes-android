@@ -1,8 +1,12 @@
 package com.cezila.hermes.presentation.onboarding
 
 import app.cash.turbine.test
+import com.cezila.hermes.core.domain.usecase.GetAllKeysUseCase
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -16,13 +20,15 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingViewModelTest {
 
+    private val getAllKeysUseCase: GetAllKeysUseCase = mockk()
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: OnboardingViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = OnboardingViewModel()
+        every { getAllKeysUseCase() } returns flowOf(emptyList())
+        viewModel = OnboardingViewModel(getAllKeysUseCase)
     }
 
     @After

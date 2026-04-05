@@ -1,9 +1,11 @@
 package com.cezila.hermes.core.data.di
 
+import com.cezila.hermes.core.data.crypto.BouncyCastlePgpDecryptor
 import com.cezila.hermes.core.data.crypto.BouncyCastlePgpEncryptor
 import com.cezila.hermes.core.data.crypto.BouncyCastlePgpKeyGenerator
 import com.cezila.hermes.core.data.crypto.BouncyCastlePgpKeyParser
 import com.cezila.hermes.core.data.keystore.KeystoreManager
+import com.cezila.hermes.core.domain.crypto.PgpDecryptor
 import com.cezila.hermes.core.domain.crypto.PgpEncryptor
 import com.cezila.hermes.core.domain.crypto.PgpKeyGenerator
 import com.cezila.hermes.core.domain.crypto.PgpKeyParser
@@ -32,4 +34,8 @@ object CryptoModule {
     @Provides
     @Singleton
     fun providePgpEncryptor(): PgpEncryptor = BouncyCastlePgpEncryptor()
+
+    @Provides
+    @Singleton
+    fun providePgpDecryptor(): PgpDecryptor = BouncyCastlePgpDecryptor()
 }
