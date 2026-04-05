@@ -32,8 +32,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import com.cezila.hermes.R
 import com.cezila.hermes.core.domain.model.PgpKey
 import com.cezila.hermes.core.ui.theme.CryptoFontFamily
 import java.text.SimpleDateFormat
@@ -53,7 +55,7 @@ fun KeyDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "KEY DETAIL",
+                        text = stringResource(R.string.keydetail_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontFamily = CryptoFontFamily,
                     )
@@ -62,7 +64,7 @@ fun KeyDetailScreen(
                     IconButton(onClick = { onEvent(KeyDetailUiEvent.OnBackClick) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                         )
                     }
                 },
@@ -93,7 +95,7 @@ fun KeyDetailScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = state.error ?: "Key not found.",
+                        text = state.error ?: stringResource(R.string.keydetail_not_found),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -115,10 +117,10 @@ fun KeyDetailScreen(
     if (state.showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { onEvent(KeyDetailUiEvent.OnDeleteDismiss) },
-            title = { Text("Delete key?") },
+            title = { Text(stringResource(R.string.keydetail_delete_title)) },
             text = {
                 Text(
-                    text = "This action cannot be undone. The key will be permanently removed from this device.",
+                    text = stringResource(R.string.keydetail_delete_message),
                 )
             },
             confirmButton = {
@@ -128,12 +130,12 @@ fun KeyDetailScreen(
                         contentColor = MaterialTheme.colorScheme.error,
                     ),
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.keydetail_delete_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { onEvent(KeyDetailUiEvent.OnDeleteDismiss) }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
         )
@@ -186,12 +188,13 @@ private fun KeyDetailContent(
 
         MetadataRow(
             label = "TYPE",
-            value = if (key.isSecret) "My Key" else "Contact",
+            value = if (key.isSecret) stringResource(R.string.keydetail_type_my_key)
+                    else stringResource(R.string.keydetail_type_contact),
         )
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "FINGERPRINT",
+            text = stringResource(R.string.keydetail_fingerprint_label),
             style = MaterialTheme.typography.labelSmall,
             fontFamily = CryptoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -207,13 +210,13 @@ private fun KeyDetailContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         MetadataRow(
-            label = "CREATED",
+            label = stringResource(R.string.keydetail_created_label),
             value = formatDate(key.createdAt),
         )
         Spacer(modifier = Modifier.height(8.dp))
         MetadataRow(
-            label = "EXPIRES",
-            value = key.expiresAt?.let { formatDate(it) } ?: "No expiration",
+            label = stringResource(R.string.keydetail_expires_label),
+            value = key.expiresAt?.let { formatDate(it) } ?: stringResource(R.string.keydetail_no_expiration),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -224,7 +227,7 @@ private fun KeyDetailContent(
             onClick = { onEvent(KeyDetailUiEvent.OnExportClick) },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Export Public Key")
+            Text(stringResource(R.string.keydetail_export_public_key))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -236,7 +239,7 @@ private fun KeyDetailContent(
                 contentColor = MaterialTheme.colorScheme.error,
             ),
         ) {
-            Text("Delete Key")
+            Text(stringResource(R.string.keydetail_delete_key))
         }
     }
 }

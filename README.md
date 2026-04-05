@@ -4,6 +4,10 @@
 
 A local PGP key manager for Android. Manage your cryptographic identities, encrypt messages, and verify signatures — entirely on your device, with no accounts, no cloud, and no backend.
 
+<p align="center">
+  <img src="preview/hermes-logo.png" alt="Hermes logo" width="160"/>
+</p>
+
 ---
 
 ## About
@@ -126,6 +130,21 @@ Key properties:
 - **Typography:** Inter for UI text, Monospace for cryptographic data (hashes, fingerprints)
 - **Depth:** Achieved through tonal layering, not drop shadows
 - **Motion:** Intentional, minimal — no decorative animations
+
+---
+
+## Screenshots
+
+<p align="center">
+  <img src="preview/home_screen.png" alt="Home screen" width="200"/>
+  <img src="preview/generate_key_screen.png" alt="Generate key screen" width="200"/>
+  <img src="preview/import_contact_key_screen.png" alt="Import contact key screen" width="200"/>
+</p>
+<p align="center">
+  <img src="preview/encrypt_screen.png" alt="Encrypt screen" width="200"/>
+  <img src="preview/encrypted_message_screen.png" alt="Encrypted message screen" width="200"/>
+  <img src="preview/decrypted_message_screen.png" alt="Decrypted message screen" width="200"/>
+</p>
 
 ---
 

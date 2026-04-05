@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -54,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cezila.hermes.R
 import com.cezila.hermes.core.domain.model.DecryptionResult
 import com.cezila.hermes.core.domain.model.PgpKey
 import com.cezila.hermes.core.domain.model.SignatureStatus
@@ -94,7 +96,7 @@ fun DecryptScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "HERMES",
+                        text = stringResource(R.string.encrypt_hermes_label),
                         fontFamily = CryptoFontFamily,
                         style = MaterialTheme.typography.titleLarge,
                     )
@@ -102,7 +104,7 @@ fun DecryptScreen(
                 actions = {
                     Icon(
                         imageVector = Icons.Outlined.Person,
-                        contentDescription = "Profile",
+                        contentDescription = stringResource(R.string.encrypt_profile),
                         modifier = Modifier.padding(end = 12.dp),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
@@ -123,7 +125,7 @@ fun DecryptScreen(
             // Hero section
             Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
                 Text(
-                    text = "Decode your\nmessage.",
+                    text = stringResource(R.string.decrypt_title),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
                         lineHeight = 44.sp,
@@ -132,7 +134,7 @@ fun DecryptScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Decrypt and cryptographically verify the\norigin of a PGP-secured payload.",
+                    text = stringResource(R.string.decrypt_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -143,7 +145,7 @@ fun DecryptScreen(
             // Mode toggle
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 Text(
-                    text = "INPUT MODE",
+                    text = stringResource(R.string.decrypt_input_mode),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 1.sp,
@@ -189,15 +191,21 @@ fun DecryptScreen(
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
                         Text(
-                            text = "TRANSMISSION DETAILS",
+                            text = stringResource(R.string.decrypt_transmission_section),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontFamily = CryptoFontFamily,
                             letterSpacing = 1.sp,
                         )
                         Spacer(Modifier.height(2.dp))
-                        SessionDetailRow(label = "Protocol", value = "OpenPGP v4")
-                        SessionDetailRow(label = "Runtime", value = "Client-Side Only")
+                        SessionDetailRow(
+                            label = stringResource(R.string.decrypt_protocol_label),
+                            value = stringResource(R.string.decrypt_protocol_value),
+                        )
+                        SessionDetailRow(
+                            label = stringResource(R.string.decrypt_runtime_label),
+                            value = stringResource(R.string.decrypt_runtime_value),
+                        )
                     }
                 }
             }
@@ -234,7 +242,7 @@ fun DecryptScreen(
                     modifier = Modifier.padding(end = 8.dp),
                 )
                 Text(
-                    text = "Decrypt & Verify",
+                    text = stringResource(R.string.decrypt_button),
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
@@ -242,7 +250,7 @@ fun DecryptScreen(
             // Footer
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "SECURE INSTANCE — NO CLOUD TETHER",
+                text = stringResource(R.string.decrypt_secure_badge),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontFamily = CryptoFontFamily,
@@ -270,7 +278,7 @@ private fun TextInputPanel(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "PGP MESSAGE",
+                text = stringResource(R.string.decrypt_pgp_message_label),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 letterSpacing = 1.sp,
@@ -281,7 +289,7 @@ private fun TextInputPanel(
                     enabled = !state.isLoading,
                 ) {
                     Text(
-                        text = "PASTE",
+                        text = stringResource(R.string.decrypt_paste),
                         style = MaterialTheme.typography.labelSmall,
                         fontFamily = CryptoFontFamily,
                     )
@@ -291,7 +299,7 @@ private fun TextInputPanel(
                     enabled = state.ciphertextInput.isNotBlank() && !state.isLoading,
                 ) {
                     Text(
-                        text = "CLEAR",
+                        text = stringResource(R.string.decrypt_clear),
                         style = MaterialTheme.typography.labelSmall,
                         fontFamily = CryptoFontFamily,
                     )
@@ -305,7 +313,7 @@ private fun TextInputPanel(
             onValueChange = { onEvent(DecryptUiEvent.OnCiphertextChanged(it)) },
             placeholder = {
                 Text(
-                    "Paste PGP message here…",
+                    stringResource(R.string.decrypt_paste_hint),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodySmall,
@@ -324,9 +332,9 @@ private fun TextInputPanel(
 
         // Header status badge
         val (statusText, statusColor) = when (state.headerStatus) {
-            HeaderStatus.Awaiting -> "AWAITING VALID HEADER…" to MaterialTheme.colorScheme.onSurfaceVariant
-            HeaderStatus.Valid -> "VALID PGP MESSAGE" to Clay
-            HeaderStatus.Invalid -> "INVALID FORMAT" to MaterialTheme.colorScheme.error
+            HeaderStatus.Awaiting -> stringResource(R.string.decrypt_awaiting_header) to MaterialTheme.colorScheme.onSurfaceVariant
+            HeaderStatus.Valid -> stringResource(R.string.decrypt_valid_message) to Clay
+            HeaderStatus.Invalid -> stringResource(R.string.decrypt_invalid_format) to MaterialTheme.colorScheme.error
         }
         Text(
             text = statusText,
@@ -346,7 +354,7 @@ private fun FileInputPanel(
 ) {
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Text(
-            text = "ENCRYPTED FILE",
+            text = stringResource(R.string.decrypt_encrypted_file),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             letterSpacing = 1.sp,
@@ -383,7 +391,7 @@ private fun FileInputPanel(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
-                            contentDescription = "Remove file",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -413,12 +421,12 @@ private fun FileInputPanel(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        text = "Encrypted File",
+                        text = stringResource(R.string.decrypt_encrypted_file),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
-                        text = "Tap to pick a .pgp or .gpg file",
+                        text = stringResource(R.string.decrypt_file_pick_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -470,19 +478,19 @@ private fun PassphraseBottomSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Enter Passphrase",
+                text = stringResource(R.string.decrypt_dialog_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = "Required to unlock your identity key for decryption.",
+                text = stringResource(R.string.decrypt_dialog_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             OutlinedTextField(
                 value = passphrase,
                 onValueChange = { passphrase = it },
-                label = { Text("Passphrase") },
+                label = { Text(stringResource(R.string.passphrase)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -496,7 +504,7 @@ private fun PassphraseBottomSheet(
                     passphrase = ""
                     onDismiss()
                 }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
                 Spacer(Modifier.width(8.dp))
                 Button(
@@ -508,7 +516,7 @@ private fun PassphraseBottomSheet(
                     enabled = passphrase.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(containerColor = Clay),
                 ) {
-                    Text("Confirm", color = Color.White)
+                    Text(stringResource(R.string.confirm), color = Color.White)
                 }
             }
         }
@@ -538,7 +546,7 @@ private fun DecryptionResultBottomSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Decrypted Message",
+                text = stringResource(R.string.decrypt_result_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -596,7 +604,7 @@ private fun DecryptionResultBottomSheet(
                                 overflow = TextOverflow.Ellipsis,
                             )
                             Text(
-                                text = "${result.plaintextBytes!!.size} bytes",
+                                text = stringResource(R.string.decrypt_file_size, result.plaintextBytes!!.size),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -616,7 +624,7 @@ private fun DecryptionResultBottomSheet(
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = Clay),
                     ) {
-                        Text("Copy", color = Color.White)
+                        Text(stringResource(R.string.copy), color = Color.White)
                     }
                 }
                 if (result.plaintextBytes != null) {
@@ -625,14 +633,14 @@ private fun DecryptionResultBottomSheet(
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = Clay),
                     ) {
-                        Text("Save File", color = Color.White)
+                        Text(stringResource(R.string.decrypt_save_file), color = Color.White)
                     }
                 }
                 TextButton(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Done")
+                    Text(stringResource(R.string.done))
                 }
             }
         }
@@ -648,14 +656,14 @@ private fun SignatureStatusBadge(
         is SignatureStatus.Valid -> {
             val signerDisplay = resolvedSigner?.let { "${it.ownerName} <${it.ownerEmail}>" }
                 ?: status.signerKeyId
-            "VERIFIED — $signerDisplay" to Clay
+            stringResource(R.string.decrypt_sig_verified, signerDisplay) to Clay
         }
         is SignatureStatus.Invalid ->
-            "SIGNATURE INVALID" to MaterialTheme.colorScheme.error
+            stringResource(R.string.decrypt_sig_invalid) to MaterialTheme.colorScheme.error
         is SignatureStatus.UnknownSigner ->
-            "UNKNOWN SIGNER — ${status.signerKeyId}" to MaterialTheme.colorScheme.onSurfaceVariant
+            stringResource(R.string.decrypt_sig_unknown, status.signerKeyId) to MaterialTheme.colorScheme.onSurfaceVariant
         SignatureStatus.None ->
-            "UNSIGNED" to MaterialTheme.colorScheme.onSurfaceVariant
+            stringResource(R.string.decrypt_sig_unsigned) to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Surface(

@@ -1,0 +1,161 @@
+<resources>
+    <string name="app_name">Hermes</string>
+
+    <!-- Compartilhadas -->
+    <string name="back">Voltar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="done">Concluído</string>
+    <string name="copy">Copiar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="passphrase">Senha</string>
+    <string name="confirm_passphrase">Confirmar Senha</string>
+    <string name="hide_passphrase">Ocultar senha</string>
+    <string name="show_passphrase">Mostrar senha</string>
+    <string name="secure_instance_no_cloud">INSTÂNCIA SEGURA  •  SEM NUVEM</string>
+    <string name="tagline">The quiet space for\nyour digital truth.</string>
+    <string name="tagline_subtitle">Sua privacidade permanece no dispositivo. Comece importando ou criando uma chave.</string>
+    <string name="settings">Configurações</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_how_to_start">Como você gostaria de começar?</string>
+    <string name="onboarding_import_or_create">Importar ou Criar Chave</string>
+    <string name="onboarding_learn_encryption">Saiba mais sobre Criptografia Local</string>
+    <string name="onboarding_generate_new_key">Gerar Nova Chave</string>
+    <string name="onboarding_generate_description">Crie um novo par de chaves RSA-4096 ou Ed25519</string>
+    <string name="onboarding_import_existing">Importar Chave Existente</string>
+    <string name="onboarding_import_description">Carregue um arquivo .asc ou .gpg do seu dispositivo</string>
+
+    <!-- Tela de chaves -->
+    <string name="keys_vault_label">COFRE</string>
+    <string name="keys_export_my_public_key">Exportar minha chave pública</string>
+    <string name="keys_more_options">Mais opções</string>
+    <string name="keys_export_all">Exportar Todas as Chaves Públicas</string>
+    <string name="keys_add_key">Adicionar chave</string>
+    <string name="keys_my_key_section">MINHA CHAVE</string>
+    <string name="keys_contacts_section">CONTATOS</string>
+    <string name="keys_search_contacts">Buscar contatos</string>
+    <string name="keys_generate_my_key">Gerar Minha Chave</string>
+    <string name="keys_already_have_identity">Você já possui uma chave de identidade</string>
+    <string name="keys_generate_description">Crie um novo par de chaves RSA-4096 ou Ed25519</string>
+    <string name="keys_import_contact">Importar Chave de Contato</string>
+    <string name="keys_import_contact_description">Adicione a chave pública de um contato (.asc ou cole)</string>
+    <string name="keys_fab_generate">GERAR SEU PAR DE CHAVES</string>
+    <string name="keys_fab_import">IMPORTAR CHAVE DE CONTATO</string>
+
+    <!-- Tela de criptografia -->
+    <string name="encrypt_hermes_label">HERMES</string>
+    <string name="encrypt_profile">Perfil</string>
+    <string name="encrypt_title">Proteja sua\nmensagem.</string>
+    <string name="encrypt_subtitle">Selecione um destinatário e prepare sua mensagem\npara entrega criptográfica ponta a ponta.</string>
+    <string name="encrypt_recipient_section">SELEÇÃO DE DESTINATÁRIO</string>
+    <string name="encrypt_no_contacts">Nenhuma chave de contato importada. Importe a chave pública de um contato para criptografar.</string>
+    <string name="encrypt_payload_section">MENSAGEM</string>
+    <string name="encrypt_message_hint">Escreva sua mensagem aqui...</string>
+    <string name="encrypt_aes_badge">AES-256 ATIVADO</string>
+    <string name="encrypt_file_archive">Arquivo</string>
+    <string name="encrypt_file_drop_hint">Solte arquivos maiores ou clique para navegar</string>
+    <string name="encrypt_sign_and_encrypt">Assinar e Criptografar</string>
+    <string name="encrypt_dialog_title">Insira a Senha</string>
+    <string name="encrypt_dialog_subtitle">Necessária para assinar a mensagem com sua chave de identidade.</string>
+    <string name="encrypt_result_title">Mensagem Criptografada</string>
+    <string name="encrypt_sig_footer">ASSINATURA DIGITAL SERÁ ANEXADA PARA %1$s</string>
+
+    <!-- Tela de descriptografia -->
+    <string name="decrypt_title">Decodifique sua\nmensagem.</string>
+    <string name="decrypt_subtitle">Descriptografe e verifique criptograficamente a\norigem de uma mensagem PGP.</string>
+    <string name="decrypt_input_mode">MODO DE ENTRADA</string>
+    <string name="decrypt_pgp_message_label">MENSAGEM PGP</string>
+    <string name="decrypt_paste">COLAR</string>
+    <string name="decrypt_clear">LIMPAR</string>
+    <string name="decrypt_paste_hint">Cole a mensagem PGP aqui…</string>
+    <string name="decrypt_awaiting_header">AGUARDANDO CABEÇALHO VÁLIDO…</string>
+    <string name="decrypt_valid_message">MENSAGEM PGP VÁLIDA</string>
+    <string name="decrypt_invalid_format">FORMATO INVÁLIDO</string>
+    <string name="decrypt_encrypted_file">ARQUIVO CRIPTOGRAFADO</string>
+    <string name="decrypt_file_pick_hint">Toque para selecionar um arquivo .pgp ou .gpg</string>
+    <string name="decrypt_transmission_section">DETALHES DA TRANSMISSÃO</string>
+    <string name="decrypt_protocol_label">Protocolo</string>
+    <string name="decrypt_protocol_value">OpenPGP v4</string>
+    <string name="decrypt_runtime_label">Execução</string>
+    <string name="decrypt_runtime_value">Somente no Dispositivo</string>
+    <string name="decrypt_button">Descriptografar e Verificar</string>
+    <string name="decrypt_secure_badge">INSTÂNCIA SEGURA — SEM NUVEM</string>
+    <string name="decrypt_dialog_title">Insira a Senha</string>
+    <string name="decrypt_dialog_subtitle">Necessária para desbloquear sua chave de identidade para descriptografia.</string>
+    <string name="decrypt_result_title">Mensagem Descriptografada</string>
+    <string name="decrypt_save_file">Salvar Arquivo</string>
+    <string name="decrypt_file_size">%1$d bytes</string>
+    <string name="decrypt_sig_verified">VERIFICADO — %1$s</string>
+    <string name="decrypt_sig_invalid">ASSINATURA INVÁLIDA</string>
+    <string name="decrypt_sig_unknown">ASSINANTE DESCONHECIDO — %1$s</string>
+    <string name="decrypt_sig_unsigned">SEM ASSINATURA</string>
+
+    <!-- Tela de geração de chave -->
+    <string name="keygen_title">Gerar Chave</string>
+    <string name="keygen_name_label">Nome</string>
+    <string name="keygen_email_label">E-mail</string>
+    <string name="keygen_algorithm_label">Algoritmo</string>
+    <string name="keygen_expiry_label">Validade da Chave</string>
+    <string name="keygen_expiry_never">Nunca</string>
+    <string name="keygen_expiry_1yr">1 ano</string>
+    <string name="keygen_expiry_2yr">2 anos</string>
+    <string name="keygen_expiry_3yr">3 anos</string>
+    <string name="keygen_private_key_notice">Sua chave privada é armazenada de forma criptografada apenas neste dispositivo.</string>
+    <string name="keygen_generating">Gerando seu par de chaves. Isso pode levar alguns segundos.</string>
+    <string name="keygen_button">Gerar Chave</string>
+    <string name="keygen_on_device_badge">MATERIAL DA CHAVE PERMANECE NO DISPOSITIVO</string>
+
+    <!-- Tela de importação de chave -->
+    <string name="keyimport_title">Importar Chave de Contato</string>
+    <string name="keyimport_pgp_block_label">Bloco de Chave Pública PGP</string>
+    <string name="keyimport_pgp_block_hint">-----BEGIN PGP PUBLIC KEY BLOCK-----</string>
+    <string name="keyimport_error_invalid_format">Formato de chave pública PGP inválido</string>
+    <string name="keyimport_error_private_key">Isso contém uma chave privada. Apenas chaves públicas podem ser importadas.</string>
+    <string name="keyimport_error_duplicate">Esta chave já está no seu chaveiro.</string>
+    <string name="keyimport_valid_key">Chave pública válida detectada</string>
+    <string name="keyimport_or_divider">ou</string>
+    <string name="keyimport_pick_file">Selecionar arquivo (.asc / .gpg)</string>
+    <string name="keyimport_file_too_large">Arquivo excede o limite de 2 MB</string>
+    <string name="keyimport_button">Importar Contato</string>
+
+    <!-- Tela de detalhe da chave -->
+    <string name="keydetail_title">DETALHE DA CHAVE</string>
+    <string name="keydetail_not_found">Chave não encontrada.</string>
+    <string name="keydetail_delete_title">Excluir chave?</string>
+    <string name="keydetail_delete_message">Esta ação não pode ser desfeita. A chave será removida permanentemente deste dispositivo.</string>
+    <string name="keydetail_delete_confirm">Excluir</string>
+    <string name="keydetail_type_my_key">Minha Chave</string>
+    <string name="keydetail_type_contact">Contato</string>
+    <string name="keydetail_fingerprint_label">IMPRESSÃO DIGITAL</string>
+    <string name="keydetail_created_label">CRIADA</string>
+    <string name="keydetail_expires_label">EXPIRA</string>
+    <string name="keydetail_no_expiration">Sem expiração</string>
+    <string name="keydetail_export_public_key">Exportar Chave Pública</string>
+    <string name="keydetail_delete_key">Excluir Chave</string>
+
+    <!-- Tela de configurações -->
+    <string name="settings_title">CONFIGURAÇÕES</string>
+    <string name="settings_danger_zone">Zona de Perigo</string>
+    <string name="settings_clear_all">Apagar Todas as Chaves</string>
+    <string name="settings_clearing">Apagando…</string>
+    <string name="settings_about">Sobre</string>
+    <string name="settings_local_first_badge">Local · Sem Nuvem · Sem Contas</string>
+    <string name="settings_clear_dialog_message">Isso excluirá permanentemente sua chave de identidade e todas as chaves de contato. Esta ação não pode ser desfeita.</string>
+    <string name="settings_clear_dialog_confirm">Apagar Tudo</string>
+    <string name="settings_version">Versão %1$s</string>
+
+    <!-- Tela de aprendizado -->
+    <string name="learn_title">Criptografia Local</string>
+    <string name="learn_pgp_heading">O que é PGP?</string>
+    <string name="learn_pgp_body">Pretty Good Privacy (PGP) é um padrão para criptografar e assinar dados. Ele usa um par de chaves matematicamente vinculadas: uma chave pública que você compartilha livremente, e uma chave privada que você mantém em segredo. Qualquer pessoa com sua chave pública pode enviar mensagens criptografadas que somente sua chave privada consegue abrir.</string>
+    <string name="learn_device_heading">Suas chaves, seu dispositivo</string>
+    <string name="learn_device_body">O Hermes nunca transmite suas chaves para nenhum servidor. O material da sua chave privada é gerado e armazenado inteiramente neste dispositivo. Não há conta, backup em nuvem ou mecanismo de recuperação — por design. Se você perder o dispositivo sem um backup exportado, as chaves se perdem.</string>
+    <string name="learn_protection_heading">Como o Hermes protege você</string>
+    <string name="learn_protection_body">Todas as operações criptográficas — geração de chaves, criptografia, descriptografia e verificação de assinatura — acontecem localmente usando a biblioteca Bouncy Castle. Os bytes da chave privada são manipulados apenas em memória e nunca escritos em logs, chamadas de rede ou armazenamento compartilhado. O Android Keystore oferece proteção adicional com respaldo de hardware onde disponível.</string>
+
+    <!-- Plurais -->
+    <plurals name="encrypt_identities_found">
+        <item quantity="one">%1$d Identidade Encontrada</item>
+        <item quantity="other">%1$d Identidades Encontradas</item>
+    </plurals>
+</resources>

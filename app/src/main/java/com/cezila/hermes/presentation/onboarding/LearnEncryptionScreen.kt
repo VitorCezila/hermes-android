@@ -21,7 +21,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.cezila.hermes.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,12 +35,12 @@ fun LearnEncryptionScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Local Encryption") },
+                title = { Text(stringResource(R.string.learn_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                         )
                     }
                 },
@@ -58,32 +60,22 @@ fun LearnEncryptionScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             InfoSection(
-                title = "What is PGP?",
-                body = "Pretty Good Privacy (PGP) is a standard for encrypting and signing data. " +
-                    "It uses a pair of mathematically linked keys: a public key you share freely, " +
-                    "and a private key you keep secret. Anyone with your public key can send you " +
-                    "encrypted messages that only your private key can unlock.",
+                title = stringResource(R.string.learn_pgp_heading),
+                body = stringResource(R.string.learn_pgp_body),
             )
 
             HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
 
             InfoSection(
-                title = "Your keys, your device",
-                body = "Hermes never transmits your keys to any server. Your private key material " +
-                    "is generated and stored entirely on this device. There is no account, " +
-                    "no cloud backup, and no recovery mechanism — by design. " +
-                    "If you lose your device without an exported backup, the keys are gone.",
+                title = stringResource(R.string.learn_device_heading),
+                body = stringResource(R.string.learn_device_body),
             )
 
             HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
 
             InfoSection(
-                title = "How Hermes protects you",
-                body = "All cryptographic operations — key generation, encryption, decryption, " +
-                    "and signature verification — happen locally using the Bouncy Castle library. " +
-                    "Private key bytes are handled in memory only and never written to logs, " +
-                    "network calls, or shared storage. The Android Keystore provides additional " +
-                    "hardware-backed protection where available.",
+                title = stringResource(R.string.learn_protection_heading),
+                body = stringResource(R.string.learn_protection_body),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
