@@ -5,6 +5,8 @@
 [![Lint](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-lint.yml/badge.svg)](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-lint.yml)
 [![Unit Tests](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-unit-tests.yml/badge.svg)](https://github.com/VitorCezila/hermes-android/actions/workflows/ci-unit-tests.yml)
 
+<a href="https://play.google.com/store/apps/details?id=com.cezila.hermes"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80"/></a>
+
 A local PGP key manager for Android. Manage your cryptographic identities, encrypt messages, and verify signatures — entirely on your device, with no accounts, no cloud, and no backend.
 
 <p align="center">
@@ -73,7 +75,9 @@ Ed25519 is the recommended choice for new keys unless interoperability with lega
 - **UI:** Jetpack Compose + Material 3
 - **Architecture:** MVI (Model-View-Intent) with Clean Architecture
 - **Key Storage:** Android Keystore
-- **PGP:** Bouncy Castle *(planned)*
+- **PGP:** Bouncy Castle 1.80 (bcpg, bcprov)
+- **Persistence:** Room
+- **Dependency Injection:** Hilt
 - **Min SDK:** 24 (Android 7.0 Nougat)
 - **Target SDK:** 36
 - **Build System:** Gradle with Kotlin DSL
@@ -108,30 +112,19 @@ State ◄── ViewModel ◄── Use Case ◄──────────�
 
 ## Project Structure
 
-```
-com.cezila.hermes/
-├── domain/
-│   ├── model/              # PgpKey, KeyPair, Fingerprint, ...
-│   ├── repository/         # Repository interfaces
-│   └── usecase/            # GenerateKeyPair, EncryptMessage, ...
-├── data/
-│   ├── repository/         # Repository implementations
-│   ├── keystore/           # Android Keystore integration
-│   ├── pgp/                # Bouncy Castle PGP wrapper
-│   └── mapper/             # Data ↔ Domain mappers
-├── presentation/
-│   ├── keylist/            # Key vault screen
-│   ├── keydetail/          # Key detail screen
-│   ├── generatekey/        # Key generation screen
-│   ├── importkey/          # Key import screen
-│   ├── encrypt/            # Encrypt & sign screen
-│   ├── decrypt/            # Decrypt & verify screen
-│   └── components/         # Shared Compose components
-└── ui/
-    └── theme/              # Material 3 theme (Color, Type, Theme)
-```
+Hermes is split into Gradle modules, with shared build configuration in convention plugins under `build-logic/`.
 
-> This is the planned structure. Packages are created as features are implemented.
+```
+hermes-android/
+├── app/                    # Compose screens and navigation (MVI)
+│   └── presentation/       # keys, keydetail, keygeneration, keyimport,
+│                           # encrypt, decrypt, onboarding, settings
+├── core/
+│   ├── domain/             # Pure Kotlin: models, use cases, repository interfaces
+│   ├── data/               # Bouncy Castle PGP, Android Keystore, Room, repositories
+│   └── ui/                 # Material 3 theme and shared components
+└── build-logic/            # Convention plugins (application, library, Hilt, Kotlin)
+```
 
 ---
 
